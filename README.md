@@ -69,10 +69,11 @@ This command checks your environment and displays a report of the status of your
 
 ### Fork the Repository
 
-1. Go to the repository containing the code for the coursework and click on the fork button as shown in the screenshot: [https://github.com/manighahrmani/union_shop/fork](https://github.com/manighahrmani/union_shop/fork) (Alternatively, just use this link: [https://github.com/manighahrmani/union_shop/fork](https://github.com/manighahrmani/union_shop/fork))
-2. Do not change anything and click on the Create fork button. You should then have a public fork of my repository with a URL like (YOUR-USERNAME replaced with your username): [https://github.com/YOUR-USERNAME/union_shop](https://github.com/YOUR-USERNAME/union_shop)
+Go to the repository containing the code for the coursework and click on the fork button as shown in the screenshot: [https://github.com/manighahrmani/union_shop/fork](https://github.com/manighahrmani/union_shop/fork) (Alternatively, just use this link: [https://github.com/manighahrmani/union_shop/fork](https://github.com/manighahrmani/union_shop/fork))
 
 ![Fork Button](https://raw.githubusercontent.com/manighahrmani/sandwich_shop/refs/heads/main/images/screenshot_fork_button.png)
+
+Do not change anything and click on the Create fork button. You should then have a public fork of my repository with a URL like (YOUR-USERNAME replaced with your username): [https://github.com/YOUR-USERNAME/union_shop](https://github.com/YOUR-USERNAME/union_shop)
 
 ![Fork Settings](https://raw.githubusercontent.com/manighahrmani/sandwich_shop/refs/heads/main/images/screenshot_fork_settings.png)
 
@@ -99,36 +100,21 @@ Your editor should automatically prompt you to install the required dependencies
 flutter pub get
 ```
 
-### Step 4: Run the Application
+### Run the Application
 
 This application is primarily designed to run on **web** and should be viewed in **mobile view** using browser developer tools. We recommend using Google Chrome.
 
-#### Start the Flutter Web App
-
-**On Windows:**
+Select Chrome as the target device and run the application either from the `main.dart` file or by entering the following command in the terminal:
 
 ```bash
 flutter run -d chrome
 ```
 
-**On macOS:**
-
-```bash
-flutter run -d chrome
-```
-
-This will launch the app in Google Chrome.
-
-#### Enable Mobile View (Responsive Design Mode)
-
-Once the app is running in Chrome:
-
-1. Open Chrome DevTools by right-clicking on the page and selecting "Inspect" (or use the shortcut `F12`).
-2. Click the "Toggle device toolbar" button as shown in the screenshot below
-
-3. Select a mobile device preset (e.g., iPhone 12 Pro, Pixel 5) or set custom dimensions
+Once the app is running in Chrome, open Chrome DevTools by right-clicking on the page and selecting "Inspect" (or use the shortcut `F12`). Click the "Toggle device toolbar" button as shown in the screenshot below.
 
 ![Chrome DevTools Mobile View](https://raw.githubusercontent.com/manighahrmani/sandwich_shop/refs/heads/main/images/screenshot_chrome_devtools.png)
+
+From the Dimensions menu, select a mobile device preset (e.g., iPhone 12 Pro, Pixel 5) or set custom dimensions
 
 ![Device Selection](https://raw.githubusercontent.com/manighahrmani/sandwich_shop/refs/heads/main/images/screenshot_chrome_devtools_device_selection.png)
 
