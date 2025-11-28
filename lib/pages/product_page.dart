@@ -22,7 +22,7 @@ class ProductPage extends StatelessWidget {
               height: 300,
               width: double.infinity,
               color: Colors.grey[100],
-              child: Image.network(product.image, fit: BoxFit.cover),
+              child: Image.asset(product.image, fit: BoxFit.cover), // <--- CHANGED
             ),
             
             const SizedBox(height: 20),
