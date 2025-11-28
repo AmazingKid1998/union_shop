@@ -80,14 +80,14 @@ class CollectionDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start, // Left Align everything
         children: [
           // Image Container
+          // Image Container
           Expanded(
             child: Container(
               width: double.infinity,
-              color: Colors.grey[100], // Light grey background like screenshot
-              child: Image.network(
+              color: Colors.grey[100],
+              child: Image.asset( // <--- CHANGED FROM .network TO .asset
                 product.image, 
                 fit: BoxFit.cover,
-                // Fallback if image fails
                 errorBuilder: (c, o, s) => const Icon(Icons.image, size: 50, color: Colors.grey),
               ),
             ),
