@@ -3,6 +3,7 @@ import '../models/product.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 import '../models/cart.dart';
+import 'cart_page.dart';
 
 class ProductPage extends StatelessWidget {
   final Product product;
@@ -60,13 +61,12 @@ class ProductPage extends StatelessWidget {
                          // 1. Add to the global list
                          globalCart.add(product);
                          
-                         // 2. Show message
-                         ScaffoldMessenger.of(context).showSnackBar(
-                           SnackBar(content: Text('${product.title} added to cart!'))
-                         );
-                         
-                         // 3. (Optional Hack) This forces the screen to redraw so the header updates
-                         (context as Element).markNeedsBuild();
+                         // 2. Immediately navigate to the Cart Page
+                         // usage of .then(...) forces the Product Page to refresh when you eventually come back
+                         Navigator.push(
+                           context,
+                           MaterialPageRoute(builder: (context) => const CartPage()),
+                         ).then((_) => (context as Element).markNeedsBuild());
                       },
                       child: const Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
