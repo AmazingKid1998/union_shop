@@ -13,3 +13,10 @@ class Product {
     required this.description,
   });
 }
+class Collection {
+  final String id;
+  final String title;
+  final String image;
+
+  Collection({required this.id, required this.title, required this.image});
+}
