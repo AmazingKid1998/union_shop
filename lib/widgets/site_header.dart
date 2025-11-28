@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 import '../pages/about_page.dart';
 import '../pages/collections_page.dart';
+import '../pages/cart_page.dart'; // <--- THIS WAS MISSING
+import '../models/cart.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -50,13 +52,36 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           child: const Text('Shop')
         ),
         
-        IconButton(
-          icon: const Icon(Icons.search, color: Colors.black),
-          onPressed: () {},
-        ),
-        IconButton(
-          icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black),
-          onPressed: () {},
+        // Cart Icon with Badge
+        Stack(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black),
+              onPressed: () {
+                // Navigate and wait for result (so we refresh when coming back)
+                Navigator.push(
+                  context, 
+                  MaterialPageRoute(builder: (context) => const CartPage())
+                ).then((_) => (context as Element).markNeedsBuild()); 
+              },
+            ),
+            // The Badge
+            if (globalCart.isNotEmpty)
+              Positioned(
+                right: 5,
+                top: 5,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(color: Colors.red, borderRadius: BorderRadius.circular(10)),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    '${globalCart.length}',
+                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+          ],
         ),
         const SizedBox(width: 20),
       ],
