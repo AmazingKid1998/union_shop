@@ -4,6 +4,7 @@ import '../pages/about_page.dart';
 import '../pages/collections_page.dart';
 import '../pages/cart_page.dart'; // <--- THIS WAS MISSING
 import '../models/cart.dart';
+import '../pages/login_page.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -84,6 +85,16 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
         const SizedBox(width: 20),
+        // Login Icon
+        IconButton(
+          icon: const Icon(Icons.person_outline, color: Colors.black),
+          onPressed: () {
+             Navigator.push(
+               context, 
+               MaterialPageRoute(builder: (context) => const LoginPage())
+             );
+          },
+        ),
       ],
     );
   }
