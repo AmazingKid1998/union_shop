@@ -5,6 +5,7 @@ import '../pages/collections_page.dart';
 import '../pages/cart_page.dart'; // <--- THIS WAS MISSING
 import '../models/cart.dart';
 import '../pages/login_page.dart';
+import '../pages/print_shack_page.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -51,6 +52,15 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
             );
           }, 
           child: const Text('Shop')
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const PrintShackPage())
+            );
+          }, 
+          child: const Text('Print Shack', style: TextStyle(color: Colors.pink))
         ),
         
         // Cart Icon with Badge
