@@ -17,7 +17,7 @@ class CollectionDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Filter using the new attribute
+    // 1. Get the products for this collection
     final products = getProductsByCollection(collectionId);
 
     return Scaffold(
@@ -25,63 +25,100 @@ class CollectionDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Title Section
             Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              ),
             ),
             
+            // 2. The Product Grid
             if (products.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(40.0),
-                child: Text('No products found in this collection.', style: TextStyle(color: Colors.grey)),
+                child: Text('No products found.', style: TextStyle(color: Colors.grey)),
               )
             else
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Wrap(
-                  spacing: 20,
-                  runSpacing: 20,
-                  children: products.map((product) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ProductPage(product: product)),
-                        );
-                      },
-                      child: Container(
-                        width: 150,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 120,
-                              width: double.infinity,
-                              child: Image.network(product.image, fit: BoxFit.cover),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-                                  Text('£${product.price}'),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: GridView.builder(
+                  shrinkWrap: true, // Important because we are inside a ScrollView
+                  physics: const NeverScrollableScrollPhysics(), // Let the main page scroll
+                  itemCount: products.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 Columns
+                    crossAxisSpacing: 20, // Horizontal space between items
+                    mainAxisSpacing: 30, // Vertical space between items
+                    childAspectRatio: 0.70, // Adjusts height (lower number = taller card)
+                  ),
+                  itemBuilder: (context, index) {
+                    return _buildProductItem(context, products[index]);
+                  },
                 ),
               ),
-            const SizedBox(height: 40),
+
+            const SizedBox(height: 60),
             const SiteFooter(),
           ],
         ),
+      ),
+    );
+  }
+
+  // 3. The Individual Product Card Design
+  Widget _buildProductItem(BuildContext context, Product product) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ProductPage(product: product)),
+        );
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, // Left Align everything
+        children: [
+          // Image Container
+          Expanded(
+            child: Container(
+              width: double.infinity,
+              color: Colors.grey[100], // Light grey background like screenshot
+              child: Image.network(
+                product.image, 
+                fit: BoxFit.cover,
+                // Fallback if image fails
+                errorBuilder: (c, o, s) => const Icon(Icons.image, size: 50, color: Colors.grey),
+              ),
+            ),
+          ),
+          
+          const SizedBox(height: 12),
+          
+          // Title
+          Text(
+            product.title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold, // Bold Title
+              fontSize: 16,
+              color: Color(0xFF333333),
+            ),
+          ),
+          
+          const SizedBox(height: 5),
+
+          // Price
+          Text(
+            '£${product.price.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey[700], // Dark Grey for price
+            ),
+          ),
+        ],
       ),
     );
   }
