@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
-import '../pages/about_page.dart';
 import '../pages/collections_page.dart';
-import '../pages/print_shack_page.dart';
 import '../pages/cart_page.dart';
 import '../pages/login_page.dart';
 import '../models/cart.dart';
+import 'mobile_nav_menu.dart'; // Import the new menu
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -39,29 +38,32 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             children: [
               // LOGO: "The UNION"
-              RichText(
-                text: const TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'The ',
-                      style: TextStyle(
-                        color: Color(0xFF4B0082),
-                        fontFamily: 'Cursive', // Tries to look hand-written
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
+              GestureDetector(
+                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const HomePage())),
+                child: RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'The ',
+                        style: TextStyle(
+                          color: Color(0xFF4B0082),
+                          fontFamily: 'Cursive',
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    ),
-                    TextSpan(
-                      text: 'UNION',
-                      style: TextStyle(
-                        color: Color(0xFF4B0082),
-                        fontFamily: 'Serif', // Looks blocky like the image
-                        fontSize: 28,
-                        fontWeight: FontWeight.w900,
+                      TextSpan(
+                        text: 'UNION',
+                        style: TextStyle(
+                          color: Color(0xFF4B0082),
+                          fontFamily: 'Serif',
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               
@@ -70,7 +72,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
               // SEARCH ICON
               IconButton(
                 icon: const Icon(Icons.search, size: 26, color: Colors.black87),
-                onPressed: () {}, // Dummy action
+                onPressed: () {}, 
               ),
 
               // PROFILE ICON
@@ -110,27 +112,24 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
 
-              // HAMBURGER MENU (Contains the links)
-              PopupMenuButton<String>(
+              // HAMBURGER MENU (Opens the MobileNavMenu)
+              IconButton(
                 icon: const Icon(Icons.menu, size: 30, color: Colors.black87),
-                onSelected: (value) {
-                  // Handle navigation
-                  if (value == 'home') {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()));
-                  } else if (value == 'shop') {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CollectionsPage()));
-                  } else if (value == 'print') {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const PrintShackPage()));
-                  } else if (value == 'about') {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutPage()));
-                  }
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) => const MobileNavMenu(),
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(1.0, 0.0); // Slide in from right
+                        const end = Offset.zero;
+                        const curve = Curves.ease;
+                        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                        return SlideTransition(position: animation.drive(tween), child: child);
+                      },
+                    )
+                  );
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  const PopupMenuItem<String>(value: 'home', child: Text('Home')),
-                  const PopupMenuItem<String>(value: 'shop', child: Text('Shop')),
-                  const PopupMenuItem<String>(value: 'print', child: Text('The Print Shack', style: TextStyle(color: Colors.pink))),
-                  const PopupMenuItem<String>(value: 'about', child: Text('About')),
-                ],
               ),
             ],
           ),
@@ -139,7 +138,6 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  // Adjusted height to fit the banner + navbar
   @override
   Size get preferredSize => const Size.fromHeight(110);
 }
