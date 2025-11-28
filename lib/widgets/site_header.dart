@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../pages/home_page.dart';
+import '../pages/about_page.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -17,10 +19,29 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
         )
       ),
       actions: [
-        // Dummy links for now
-        TextButton(onPressed: () {}, child: const Text('Home')),
+        TextButton(
+          onPressed: () {
+            // Navigate to Home
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => const HomePage())
+            );
+          }, 
+          child: const Text('Home')
+        ),
+        TextButton(
+          onPressed: () {
+            // Navigate to About
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const AboutPage())
+            );
+          }, 
+          child: const Text('About')
+        ),
+        // Placeholder for Shop button (We will do this next)
         TextButton(onPressed: () {}, child: const Text('Shop')),
-        TextButton(onPressed: () {}, child: const Text('About')),
+        
         IconButton(
           icon: const Icon(Icons.search, color: Colors.black),
           onPressed: () {},
@@ -29,7 +50,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black),
           onPressed: () {},
         ),
-        const SizedBox(width: 20), // Spacing
+        const SizedBox(width: 20),
       ],
     );
   }
