@@ -97,8 +97,8 @@ class _PrintShackPageState extends State<PrintShackPage> {
                            title: 'Personalise Text',
                            price: 3.00,
                            image: 'https://via.placeholder.com/150/000000/FFFFFF/?text=P',
-                           // Format exactly how we want it in the cart
                            description: 'Text: ${_textController.text}', 
+                           collectionId: 'custom', // <--- ADDED THIS to match new model
                          );
 
                          globalCart.add(customProduct);
