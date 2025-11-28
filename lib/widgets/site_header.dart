@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 import '../pages/about_page.dart';
+import '../pages/collections_page.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -39,8 +40,15 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           }, 
           child: const Text('About')
         ),
-        // Placeholder for Shop button (We will do this next)
-        TextButton(onPressed: () {}, child: const Text('Shop')),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context, 
+              MaterialPageRoute(builder: (context) => const CollectionsPage())
+            );
+          }, 
+          child: const Text('Shop')
+        ),
         
         IconButton(
           icon: const Icon(Icons.search, color: Colors.black),
