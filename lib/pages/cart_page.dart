@@ -36,7 +36,7 @@ class _CartPageState extends State<CartPage> {
                       return Column(
                         children: [
                           ListTile(
-                            leading: Image.network(product.image, width: 60, height: 60, fit: BoxFit.cover),
+                            leading: Image.asset(product.image, width: 60, height: 60, fit: BoxFit.cover),
                             title: Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold)),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
