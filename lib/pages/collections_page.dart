@@ -68,7 +68,7 @@ class CollectionsPage extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                child: Image.network(imageUrl, fit: BoxFit.cover),
+                child: Image.asset(imageUrl, fit: BoxFit.cover),
               ),
             ),
             Padding(
