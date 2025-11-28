@@ -1,6 +1,20 @@
 import '../models/product.dart';
 
-// A list of fake products
+// 1. Define our Collections (Categories)
+final List<Collection> dummyCollections = [
+  Collection(
+    id: 'c1',
+    title: 'Clothing',
+    image: 'https://via.placeholder.com/300x200/4B0082/ffffff?text=Clothing',
+  ),
+  Collection(
+    id: 'c2',
+    title: 'Accessories',
+    image: 'https://via.placeholder.com/300x200/2196f3/ffffff?text=Accessories',
+  ),
+];
+
+// 2. Define our Products (Linked to Collection IDs)
 final List<Product> dummyProducts = [
   Product(
     id: 'p1',
@@ -24,3 +38,12 @@ final List<Product> dummyProducts = [
     description: 'Start your morning right with this ceramic mug.',
   ),
 ];
+
+// Helper to get products by collection (Simple filter)
+List<Product> getProductsByCollection(String collectionId) {
+  if (collectionId == 'c1') {
+    return dummyProducts.where((p) => p.title.contains('Hoodie') || p.title.contains('Shirt')).toList();
+  } else {
+    return dummyProducts.where((p) => p.title.contains('Mug')).toList();
+  }
+}
