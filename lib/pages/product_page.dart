@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
+import '../models/cart.dart';
 
 class ProductPage extends StatelessWidget {
   final Product product;
@@ -56,10 +57,16 @@ class ProductPage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 15),
                       ),
                       onPressed: () {
-                         // We will add cart logic in Phase 3
+                         // 1. Add to the global list
+                         globalCart.add(product);
+                         
+                         // 2. Show message
                          ScaffoldMessenger.of(context).showSnackBar(
-                           const SnackBar(content: Text('Added to cart (Fake)'))
+                           SnackBar(content: Text('${product.title} added to cart!'))
                          );
+                         
+                         // 3. (Optional Hack) This forces the screen to redraw so the header updates
+                         (context as Element).markNeedsBuild();
                       },
                       child: const Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
