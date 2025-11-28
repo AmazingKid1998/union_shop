@@ -28,13 +28,14 @@ class CollectionsPage extends StatelessWidget {
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
                 children: [
-                  _buildCategoryCard(context, 'Clothing', 'c_clothing', 'https://via.placeholder.com/300x300/4B0082/ffffff?text=Clothing'),
-                  _buildCategoryCard(context, 'Merchandise', 'c_merch', 'https://via.placeholder.com/300x300/2196f3/ffffff?text=Merch'),
-                  _buildCategoryCard(context, 'Halloween 🎃', 'c_halloween', 'https://via.placeholder.com/300x300/ff9800/000000?text=Halloween'),
-                  _buildCategoryCard(context, 'Signature Range', 'c_signature', 'https://via.placeholder.com/300x300/1a237e/ffffff?text=Signature'),
-                  _buildCategoryCard(context, 'Portsmouth City', 'c_city', 'https://via.placeholder.com/300x300/607d8b/ffffff?text=City'),
-                  _buildCategoryCard(context, 'Pride 🏳️‍🌈', 'c_pride', 'https://via.placeholder.com/300x300/FFC107/ffffff?text=Pride'),
-                  _buildCategoryCard(context, 'Graduation 🎓', 'c_grad', 'https://via.placeholder.com/300x300/795548/ffffff?text=Graduation'),
+                  // Make sure these filenames match what is in your assets/images folder!
+                  _buildCategoryCard(context, 'Clothing', 'c_clothing', 'assets/images/clothing_cat.jpg'),
+                  _buildCategoryCard(context, 'Merchandise', 'c_merch', 'assets/images/merch_cat.jpg'),
+                  _buildCategoryCard(context, 'Halloween 🎃', 'c_halloween', 'assets/images/halloween_cat.jpg'),
+                  _buildCategoryCard(context, 'Signature Range', 'c_signature', 'assets/images/signature_cat.jpg'),
+                  _buildCategoryCard(context, 'Portsmouth City', 'c_city', 'assets/images/city_cat.jpg'),
+                  _buildCategoryCard(context, 'Pride 🏳️‍🌈', 'c_pride', 'assets/images/pride_cat.jpg'),
+                  _buildCategoryCard(context, 'Graduation 🎓', 'c_grad', 'assets/images/grad_cat.jpg'),
                 ],
               ),
             ),
@@ -46,7 +47,7 @@ class CollectionsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryCard(BuildContext context, String title, String id, String imageUrl) {
+  Widget _buildCategoryCard(BuildContext context, String title, String id, String imagePath) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -68,7 +69,17 @@ class CollectionsPage extends StatelessWidget {
             Expanded(
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                child: Image.asset(imageUrl, fit: BoxFit.cover),
+                child: Image.asset(
+                  imagePath, 
+                  fit: BoxFit.cover,
+                  // If the specific category image is missing, show a grey box with an icon
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey[200],
+                      child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40),
+                    );
+                  },
+                ),
               ),
             ),
             Padding(
