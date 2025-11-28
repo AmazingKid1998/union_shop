@@ -6,115 +6,135 @@ class SiteFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.grey[100], // Light grey background like the real site
-      padding: const EdgeInsets.only(top: 40, bottom: 20, left: 20, right: 20),
+      color: const Color(0xFFF5F5F7), // Light grey background like the image
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       width: double.infinity,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Desktop-style Multi-column layout
-          Wrap(
-            spacing: 50,
-            runSpacing: 30,
-            alignment: WrapAlignment.start,
-            children: [
-              // Column 1: Quick Links
-              SizedBox(
-                width: 150,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('QUICK LINKS', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                    SizedBox(height: 15),
-                    Text('Search', style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text('About Us', style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text('Contact Us', style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text('Terms of Service', style: TextStyle(color: Colors.grey)),
-                    SizedBox(height: 8),
-                    Text('Refund policy', style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
+          // --- SECTION 1: OPENING HOURS ---
+          const Text(
+            'Opening Hours',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+          ),
+          const SizedBox(height: 15),
+          
+          // Winter Break Text
+          Row(
+            children: const [
+              Icon(Icons.ac_unit, size: 16, color: Colors.lightBlue),
+              SizedBox(width: 5),
+              Text(
+                'Winter Break Closure Dates',
+                style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic, color: Colors.blueGrey),
               ),
-
-              // Column 2: Get In Touch
-              SizedBox(
-                width: 250,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('GET IN TOUCH', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                    SizedBox(height: 15),
-                    Text(
-                      'The Union Shop\nUniversity of Portsmouth Student Union\nCambridge Road\nPortsmouth\nPO1 2EF',
-                      style: TextStyle(color: Colors.grey, height: 1.5),
-                    ),
-                    SizedBox(height: 15),
-                    Text('shop@upsu.net', style: TextStyle(color: Colors.indigo, decoration: TextDecoration.underline)),
-                  ],
-                ),
-              ),
-
-               // Column 3: Newsletter (Simplified)
-              SizedBox(
-                width: 300,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('NEWSLETTER', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                    const SizedBox(height: 15),
-                    const Text('Subscribe to receive updates, access to exclusive deals, and more.', style: TextStyle(color: Colors.grey)),
-                    const SizedBox(height: 15),
-                    // Fake Input Field
-                    Container(
-                      height: 45,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[400]!),
-                        color: Colors.white,
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        children: const [
-                          Expanded(child: Text('Enter your email address', style: TextStyle(color: Colors.grey))),
-                          Icon(Icons.email_outlined, color: Colors.grey),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              SizedBox(width: 5),
+              Icon(Icons.ac_unit, size: 16, color: Colors.lightBlue),
             ],
           ),
+          const SizedBox(height: 10),
+          
+          _buildFooterText('Closing 4pm 19/12/2025', isBold: true),
+          _buildFooterText('Reopening 10am 05/01/2026', isBold: true),
+          const SizedBox(height: 10),
+          _buildFooterText('Last post date: 12pm on 18/12/2025', isBold: true),
+          
+          const SizedBox(height: 15),
+          const Text('-----------------------', style: TextStyle(color: Colors.blueGrey, letterSpacing: 2)),
+          const SizedBox(height: 15),
+
+          _buildFooterText('(Term Time)', isBold: true),
+          const SizedBox(height: 5),
+          _buildFooterText('Monday - Friday 10am - 4pm', isBold: true),
+          
+          const SizedBox(height: 15),
+          _buildFooterText('(Outside of Term Time / Consolidation Weeks)', isBold: true),
+          const SizedBox(height: 5),
+          _buildFooterText('Monday - Friday 10am - 3pm', isBold: true),
+          
+          const SizedBox(height: 15),
+          _buildFooterText('Purchase online 24/7', isBold: true),
 
           const SizedBox(height: 40),
-          const Divider(),
-          const SizedBox(height: 20),
 
-          // Bottom Section: Copyright & Payment Icons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Expanded(
-                child: Text(
-                  '© 2025 The Union Shop • Powered by Shopify',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+          // --- SECTION 2: HELP AND INFORMATION ---
+          const Text(
+            'Help and Information',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+          ),
+          const SizedBox(height: 20),
+          _buildFooterLink('Search'),
+          const SizedBox(height: 15),
+          _buildFooterLink('Terms & Conditions of Sale Policy'),
+
+          const SizedBox(height: 40),
+
+          // --- SECTION 3: LATEST OFFERS ---
+          const Text(
+            'Latest Offers',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+          ),
+          const SizedBox(height: 15),
+          
+          // Email Input
+          Container(
+            color: Colors.white,
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Email address',
+                hintStyle: const TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(0), // Boxy border
+                  borderSide: const BorderSide(color: Colors.grey),
                 ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               ),
-              // Payment Icons (Using Icons as placeholders)
-              Row(
-                children: const [
-                  Icon(Icons.credit_card, color: Colors.grey, size: 30),
-                  SizedBox(width: 10),
-                  Icon(Icons.payment, color: Colors.grey, size: 30),
-                  SizedBox(width: 10),
-                  Icon(Icons.account_balance_wallet, color: Colors.grey, size: 30),
-                ],
-              )
-            ],
+            ),
+          ),
+          
+          const SizedBox(height: 10),
+
+          // Subscribe Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4B0082), // Deep Indigo/Purple
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), // Slightly rounded corners
+              ),
+              onPressed: () {},
+              child: const Text(
+                'SUBSCRIBE',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 1.5),
+              ),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Helper for standard footer text lines
+  Widget _buildFooterText(String text, {bool isBold = false}) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.blueGrey[700],
+        fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
+        fontStyle: FontStyle.italic,
+        fontSize: 14,
+      ),
+    );
+  }
+
+  // Helper for footer links
+  Widget _buildFooterLink(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: Colors.blueGrey[700],
+        fontSize: 16,
       ),
     );
   }
