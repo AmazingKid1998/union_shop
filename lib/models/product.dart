@@ -4,7 +4,7 @@ class Product {
   final double price;
   final String image;
   final String description;
-  final String collectionId; // <--- NEW ATTRIBUTE
+  final String collectionId; // Used for filtering categories
 
   Product({
     required this.id,
@@ -12,6 +12,6 @@ class Product {
     required this.price,
     required this.image,
     required this.description,
-    required this.collectionId, // Required now
+    required this.collectionId,
   });
 }
