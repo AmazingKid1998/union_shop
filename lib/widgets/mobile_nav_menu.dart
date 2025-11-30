@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/cart.dart'; 
-import '../pages/collection_detail_page.dart'; // Still need this for specific collection navigation
+import '../pages/collection_detail_page.dart'; // Needed for specific sub-categories
 
 class MobileNavMenu extends StatefulWidget {
   const MobileNavMenu({super.key});
@@ -10,7 +10,7 @@ class MobileNavMenu extends StatefulWidget {
 }
 
 class _MobileNavMenuState extends State<MobileNavMenu> {
-  int _menuIndex = 0;
+  int _menuIndex = 0; // 0 = Main Menu, 1 = Shop Submenu
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // HEADER: Main View (No Search Icon)
+  // HEADER: Main View
   Widget _buildMainHeader(BuildContext context) {
     return Row(
       children: [
@@ -102,7 +102,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
             icon: const Icon(Icons.chevron_left, size: 30, color: Colors.black),
             onPressed: () {
               setState(() {
-                _menuIndex = 0; 
+                _menuIndex = 0; // Go back
               });
             },
           ),
@@ -113,13 +113,13 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // CONTENT: Main Menu (Using Named Routes)
+  // CONTENT: Main Menu
   Widget _buildMainMenu() {
     return ListView(
       children: [
         _buildMenuItem('Home', onTap: () => Navigator.pushNamed(context, '/')),
         
-        // Shop -> Opens Submenu (Level 2)
+        // Shop -> Opens Submenu
         _buildMenuItem('Shop', hasArrow: true, onTap: () {
           setState(() {
             _menuIndex = 1;
@@ -127,15 +127,19 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
         }),
         
         _buildMenuItem('The Print Shack', hasArrow: true, onTap: () => Navigator.pushNamed(context, '/print-shack')),
-        _buildMenuItem('SALE!', onTap: () {}), 
+        _buildMenuItem('SALE!', onTap: () => Navigator.pushNamed(context, '/sale')), // Now links to Sale Page
         _buildMenuItem('About', onTap: () => Navigator.pushNamed(context, '/about')),
-        _buildMenuItem('UPSU.net', isLast: true, onTap: () {}), 
+        _buildMenuItem('UPSU.net', isLast: true, onTap: () {
+          // Placeholder for external link
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('External Link: UPSU.net')));
+        }), 
       ],
     );
   }
 
-  // CONTENT: Shop Menu (Still uses MaterialPageRoute for arguments)
+  // CONTENT: Shop Menu (Sub-categories)
   Widget _buildShopMenu() {
+    // Helper to navigate to specific collection
     void navTo(String id, String title) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => CollectionDetailPage(
         collectionId: id, 
@@ -156,6 +160,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
+  // Helper Widget for Menu Item
   Widget _buildMenuItem(String text, {bool hasArrow = false, bool isLast = false, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
