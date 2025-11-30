@@ -22,4 +22,5 @@ flutter:
   
   # Indentation matters! 2 spaces for 'assets', 4 spaces for the dash.
   assets:
-    - assets/images/  # <--- Note the space after '-' and the '/' at the end
+    - assets/images/
+    - assets/data/  # <--- Add this line
