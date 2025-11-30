@@ -10,7 +10,6 @@ class SalePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get sale items
     final saleProducts = getSaleProducts();
 
     return Scaffold(
@@ -18,22 +17,53 @@ class SalePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header
-            Container(
-              width: double.infinity,
-              color: Colors.redAccent,
-              padding: const EdgeInsets.all(30),
-              child: const Column(
+            // --- NEW MINIMAL HEADER ---
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+              child: Column(
                 children: [
-                  Text('FLASH SALE', style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                  SizedBox(height: 10),
-                  Text('Limited time offers!', style: TextStyle(color: Colors.white, fontSize: 18)),
+                  const Text(
+                    'SALE',
+                    style: TextStyle(
+                      fontSize: 36, 
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333), // Dark grey
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Don’t miss out! Get yours before they’re all gone!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blueGrey[600],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 40),
+                  
+                  // Small note with icon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'All prices shown are inclusive of the discount',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blueGrey[400],
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(Icons.shopping_cart_outlined, size: 16, color: Colors.blueGrey[400]),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
 
-            // Grid
+            const SizedBox(height: 10),
+
+            // GRID (Same clean card design from before)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: GridView.builder(
@@ -42,7 +72,7 @@ class SalePage extends StatelessWidget {
                 itemCount: saleProducts.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.65, // Taller to fit the text
+                  childAspectRatio: 0.65, 
                   crossAxisSpacing: 15,
                   mainAxisSpacing: 30,
                 ),
@@ -67,17 +97,17 @@ class SalePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // IMAGE (Clean, no stamp)
+          // IMAGE (Clean, white background)
           Expanded(
             child: Container(
               width: double.infinity,
-              color: Colors.white, // Clean white background like the pic
+              color: Colors.white, 
               child: Image.asset(product.image, fit: BoxFit.cover),
             ),
           ),
           const SizedBox(height: 12),
           
-          // Title (Blue/Grey Bold)
+          // Title
           Text(
             product.title,
             maxLines: 2,
@@ -85,31 +115,28 @@ class SalePage extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
-              color: Colors.blueGrey[800], // Matches the "Classic Sweatshirts" text color
+              color: Colors.blueGrey[800],
             ),
           ),
           const SizedBox(height: 5),
 
-          // PRICE ROW (The specific design you asked for)
+          // PRICE ROW
           Row(
             children: [
-              // 1. Old Price (Crossed out)
               Text(
                 '£${product.oldPrice!.toStringAsFixed(2)}',
                 style: const TextStyle(
                   decoration: TextDecoration.lineThrough,
-                  decorationThickness: 2, // Thicker line matches the pic
+                  decorationThickness: 2,
                   color: Colors.grey,
                   fontSize: 16,
                 ),
               ),
               const SizedBox(width: 10),
-              
-              // 2. New Price (Bold)
               Text(
                 '£${product.price.toStringAsFixed(2)}',
                 style: TextStyle(
-                  color: Colors.blueGrey[800], // Matches title color
+                  color: Colors.blueGrey[800],
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
