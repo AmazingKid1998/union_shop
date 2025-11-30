@@ -22,60 +22,108 @@ class _CartPageState extends State<CartPage> {
             child: Text('Your Basket', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
           ),
 
-          // The List
+          // THE CART LIST
           Expanded(
             child: globalCart.isEmpty
                 ? const Center(child: Text('Your basket is empty.'))
-                : ListView.builder(
+                : ListView.separated(
+                    padding: const EdgeInsets.all(20),
                     itemCount: globalCart.length,
+                    separatorBuilder: (c, i) => const Divider(height: 40),
                     itemBuilder: (context, index) {
                       final product = globalCart[index];
-                      // Check if this is a custom item to show the text
+                      // Check if this is a custom item
                       final isCustom = product.id.startsWith('custom_');
 
-                      return Column(
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ListTile(
-                            leading: Image.asset(product.image, width: 60, height: 60, fit: BoxFit.cover),
-                            title: Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 5),
-                                Text('£${product.price.toStringAsFixed(2)}', style: const TextStyle(color: Colors.indigo)),
-                                
-                                // THIS IS THE FIX: Show the custom text if it exists
-                                if (isCustom) 
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 5.0),
-                                    child: Text(
-                                      product.description, // This contains "Text: Your Name"
-                                      style: TextStyle(color: Colors.grey[600], fontStyle: FontStyle.italic),
-                                    ),
-                                  ),
-                              ],
+                          // 1. PRODUCT IMAGE
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]!),
                             ),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete_outline, color: Colors.red),
-                              onPressed: () {
-                                setState(() {
-                                  globalCart.remove(product);
-                                });
-                              },
+                            child: Image.asset(
+                              product.image, 
+                              fit: BoxFit.cover,
+                              errorBuilder: (c,o,s) => const Icon(Icons.image_not_supported),
                             ),
                           ),
-                          const Divider(), // Adds a line between items like the real site
+
+                          const SizedBox(width: 20),
+
+                          // 2. PRODUCT DETAILS (Middle Column)
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  product.title, 
+                                  style: TextStyle(
+                                    fontSize: 16, 
+                                    color: Colors.blue[900], // Match screenshot blue title
+                                    fontWeight: FontWeight.w500
+                                  )
+                                ),
+                                const SizedBox(height: 8),
+
+                                // CUSTOM PARSING LOGIC
+                                if (isCustom) 
+                                  _buildCustomDetails(product.description),
+                              ],
+                            ),
+                          ),
+
+                          const SizedBox(width: 10),
+
+                          // 3. PRICE & EDIT (Right Column)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '£${product.price.toStringAsFixed(2)}', 
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)
+                              ),
+                              const SizedBox(height: 10),
+                              
+                              // EDIT BUTTON
+                              OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                                  side: const BorderSide(color: Colors.indigo),
+                                  minimumSize: const Size(0, 30), // Compact button
+                                ),
+                                onPressed: () {
+                                  // Visual placeholder for Edit functionality
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Edit feature coming soon!')));
+                                },
+                                child: const Text('EDIT', style: TextStyle(fontSize: 12, color: Colors.indigo, fontWeight: FontWeight.bold)),
+                              ),
+
+                              // Remove Button (Small icon below)
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline, color: Colors.grey, size: 20),
+                                onPressed: () {
+                                  setState(() {
+                                    globalCart.removeAt(index);
+                                  });
+                                },
+                              )
+                            ],
+                          )
                         ],
                       );
                     },
                   ),
           ),
 
-          // Total & Checkout
+          // FOOTER / CHECKOUT SECTION
           if (globalCart.isNotEmpty)
             Container(
               padding: const EdgeInsets.all(20),
-              color: Colors.grey[50], // Slightly off-white background
+              color: Colors.grey[50], 
               child: Column(
                 children: [
                   Row(
@@ -111,5 +159,56 @@ class _CartPageState extends State<CartPage> {
         ],
       ),
     );
+  }
+
+  // --- HELPER TO PARSE AND FORMAT THE TEXT ---
+  Widget _buildCustomDetails(String description) {
+    // Expected format: "Two Lines of Text: Hello / World"
+    if (!description.contains(':')) return Text(description);
+
+    try {
+      final int splitIndex = description.indexOf(':');
+      final String optionName = description.substring(0, splitIndex); // "Two Lines of Text"
+      final String content = description.substring(splitIndex + 1).trim(); // "Hello / World"
+      
+      // Split the content by the separator we used (" / ")
+      final List<String> lines = content.split(' / ');
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // "Per Line: Two Lines of Text"
+          Text(
+            'Per Line: $optionName', 
+            style: TextStyle(color: Colors.blueGrey[700], fontSize: 13, fontStyle: FontStyle.italic)
+          ),
+          
+          const SizedBox(height: 8),
+
+          // Loop through each line to display exactly like screenshot
+          ...List.generate(lines.length, (index) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 6.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Personalisation', 
+                    style: TextStyle(color: Colors.blue[800], fontSize: 13) // Blue header
+                  ),
+                  Text(
+                    'Line ${index + 1}: ${lines[index]}',
+                    style: TextStyle(color: Colors.blueGrey[600], fontSize: 13, fontStyle: FontStyle.italic),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      );
+    } catch (e) {
+      // Fallback if parsing fails
+      return Text(description, style: const TextStyle(color: Colors.grey));
+    }
   }
 }
