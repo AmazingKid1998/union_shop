@@ -19,5 +19,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # Indentation matters! 2 spaces for 'assets', 4 spaces for the dash.
   assets:
-    - assets/images
+    - assets/images/  # <--- Note the space after '-' and the '/' at the end
