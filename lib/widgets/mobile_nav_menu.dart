@@ -1,14 +1,6 @@
 import 'package:flutter/material.dart';
-import '../pages/home_page.dart';
-import '../pages/about_page.dart';
-import '../pages/collections_page.dart';
-import '../pages/print_shack_page.dart';
-import '../pages/collection_detail_page.dart';
 import '../models/cart.dart'; 
-import '../pages/cart_page.dart';
-import '../pages/login_page.dart';
-// Note: We don't strictly need to import product_search_delegate here anymore if we aren't using it, 
-// but keeping it doesn't hurt.
+import '../pages/collection_detail_page.dart'; // Still need this for specific collection navigation
 
 class MobileNavMenu extends StatefulWidget {
   const MobileNavMenu({super.key});
@@ -51,7 +43,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // HEADER: Main View (Search Icon Removed)
+  // HEADER: Main View (No Search Icon)
   Widget _buildMainHeader(BuildContext context) {
     return Row(
       children: [
@@ -65,15 +57,20 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
         ),
         const Spacer(),
         
-        // SEARCH ICON WAS HERE - NOW REMOVED
+        // Profile Icon -> Named Route
+        IconButton(
+          icon: const Icon(Icons.person_outline, size: 26), 
+          onPressed: () => Navigator.pushNamed(context, '/login')
+        ),
         
-        IconButton(icon: const Icon(Icons.person_outline, size: 26), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const LoginPage()))),
-        
-        // Cart Icon
+        // Cart Icon -> Named Route
         Stack(
           alignment: Alignment.center,
           children: [
-            IconButton(icon: const Icon(Icons.shopping_bag_outlined, size: 26), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const CartPage()))),
+            IconButton(
+              icon: const Icon(Icons.shopping_bag_outlined, size: 26), 
+              onPressed: () => Navigator.pushNamed(context, '/cart')
+            ),
             if (globalCart.isNotEmpty)
               Positioned(
                 right: 4, top: 4,
@@ -116,25 +113,28 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // CONTENT: Main Menu
+  // CONTENT: Main Menu (Using Named Routes)
   Widget _buildMainMenu() {
     return ListView(
       children: [
-        _buildMenuItem('Home', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const HomePage()))),
+        _buildMenuItem('Home', onTap: () => Navigator.pushNamed(context, '/')),
+        
+        // Shop -> Opens Submenu (Level 2)
         _buildMenuItem('Shop', hasArrow: true, onTap: () {
           setState(() {
             _menuIndex = 1;
           });
         }),
-        _buildMenuItem('The Print Shack', hasArrow: true, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const PrintShackPage()))),
+        
+        _buildMenuItem('The Print Shack', hasArrow: true, onTap: () => Navigator.pushNamed(context, '/print-shack')),
         _buildMenuItem('SALE!', onTap: () {}), 
-        _buildMenuItem('About', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const AboutPage()))),
+        _buildMenuItem('About', onTap: () => Navigator.pushNamed(context, '/about')),
         _buildMenuItem('UPSU.net', isLast: true, onTap: () {}), 
       ],
     );
   }
 
-  // CONTENT: Shop Menu
+  // CONTENT: Shop Menu (Still uses MaterialPageRoute for arguments)
   Widget _buildShopMenu() {
     void navTo(String id, String title) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => CollectionDetailPage(
