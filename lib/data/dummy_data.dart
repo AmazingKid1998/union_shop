@@ -1,72 +1,173 @@
 import '../models/product.dart';
 
-// No "Collection" list needed anymore!
-
+// The 18 Products + Extras, using Local Assets and Collection IDs
 final List<Product> dummyProducts = [
   // --- CLOTHING (c_clothing) ---
   Product(
     id: 'p1',
     title: 'Classic Hoodies',
     price: 25.00,
-    image: 'https://via.placeholder.com/300x300/4B0082/ffffff?text=Classic+Hoodie',
-    description: 'Our best selling Classic Hoodie comes in great colours!',
+    image: 'assets/images/p1.jpg', 
+    description: 'Our best selling Classic Hoodie comes in great colours! Double Fabric Hood with self colour flat hood cords.',
     collectionId: 'c_clothing',
   ),
   Product(
     id: 'p2',
     title: 'Classic Sweatshirts',
     price: 23.00,
-    image: 'https://via.placeholder.com/300x300/3f51b5/ffffff?text=Sweatshirt',
-    description: 'A comfortable classic sweatshirt.',
+    image: 'assets/images/p2.jpg',
+    description: 'A comfortable classic sweatshirt perfect for everyday wear.',
     collectionId: 'c_clothing',
   ),
+  Product(
+    id: 'p3',
+    title: 'Classic T-Shirts',
+    price: 11.00,
+    image: 'assets/images/p3.jpg',
+    description: 'Soft cotton T-shirt featuring the Union logo. A wardrobe essential.',
+    collectionId: 'c_clothing',
+  ),
+  Product(
+    id: 'p4',
+    title: 'Graduation Hoodies',
+    price: 35.00,
+    image: 'assets/images/p4.jpg',
+    description: 'Celebrate your achievement with our official Graduation Hoodie.',
+    collectionId: 'c_grad', // Also tagged as graduation
+  ),
+  Product(
+    id: 'p5',
+    title: 'Classic Sweatshirts - Neutral',
+    price: 17.00,
+    image: 'assets/images/p5.jpg',
+    description: 'The classic sweatshirt in a range of stylish neutral tones.',
+    collectionId: 'c_clothing',
+  ),
+  Product(
+    id: 'p6',
+    title: 'Limited Edition Essential Zip Hoodies',
+    price: 20.00,
+    image: 'assets/images/p6.jpg',
+    description: 'Limited run essential zip hoodie. Grab yours while stock lasts.',
+    collectionId: 'c_clothing',
+  ),
+  Product(
+    id: 'p7',
+    title: 'Essential T-Shirt',
+    price: 10.00,
+    image: 'assets/images/p7.jpg',
+    description: 'Great value essential T-shirt for your daily rotation.',
+    collectionId: 'c_clothing',
+  ),
+  Product(
+    id: 'p8',
+    title: 'Christmas Jumper',
+    price: 16.00,
+    image: 'assets/images/p8.jpg',
+    description: 'Get festive with the official Union Christmas jumper!',
+    collectionId: 'c_clothing',
+  ),
+  Product(
+    id: 'p9',
+    title: 'Heavyweight Shorts',
+    price: 20.00,
+    image: 'assets/images/p9.jpg',
+    description: 'Durable heavyweight shorts, perfect for sports or lounging.',
+    collectionId: 'c_clothing',
+  ),
+  
+  // --- SIGNATURE RANGE (c_signature) ---
+  Product(
+    id: 'p10',
+    title: 'Signature Hoodie',
+    price: 32.99,
+    image: 'assets/images/p10.jpg',
+    description: 'Premium quality hoodie from our exclusive Signature range.',
+    collectionId: 'c_signature',
+  ),
+  Product(
+    id: 'p11',
+    title: 'Signature T-Shirt',
+    price: 14.99,
+    image: 'assets/images/p11.jpg',
+    description: 'Premium cotton T-shirt from our exclusive Signature range.',
+    collectionId: 'c_signature',
+  ),
 
-  // --- MERCHANDISE (c_merch) ---
+  // --- MERCHANDISE (c_merch) & CITY COLLECTION (c_city) ---
   Product(
     id: 'p12',
     title: 'Portsmouth City Postcard',
     price: 1.00,
-    image: 'https://via.placeholder.com/300x300/00bcd4/ffffff?text=Postcard',
-    description: 'A beautiful postcard.',
+    image: 'assets/images/p12.jpg',
+    description: 'A beautiful postcard featuring iconic Portsmouth City landmarks.',
+    collectionId: 'c_merch',
+  ),
+  Product(
+    id: 'p13',
+    title: 'Portsmouth City Magnet',
+    price: 4.50,
+    image: 'assets/images/p13.jpg',
+    description: 'Fridge magnet to remember your time in Portsmouth.',
+    collectionId: 'c_city',
+  ),
+  Product(
+    id: 'p14',
+    title: 'Portsmouth City Bookmark',
+    price: 3.00,
+    image: 'assets/images/p14.jpg',
+    description: 'Keep your place in your textbooks with this city bookmark.',
+    collectionId: 'c_merch',
+  ),
+  Product(
+    id: 'p15',
+    title: 'Portsmouth City Notebook',
+    price: 7.50,
+    image: 'assets/images/p15.jpg',
+    description: 'A5 notebook perfect for lectures and taking notes.',
+    collectionId: 'c_merch',
+  ),
+  Product(
+    id: 'p16',
+    title: 'Portsmouth City Water Bottle',
+    price: 15.00,
+    image: 'assets/images/p16.jpg',
+    description: 'Stay hydrated with this reusable Portsmouth City water bottle.',
+    collectionId: 'c_city',
+  ),
+  Product(
+    id: 'p17',
+    title: 'Portsmouth City Coaster',
+    price: 4.50,
+    image: 'assets/images/p17.jpg',
+    description: 'Protect your desk with this stylish city coaster.',
+    collectionId: 'c_city',
+  ),
+  Product(
+    id: 'p18',
+    title: 'Portsmouth City Keyring',
+    price: 6.75,
+    image: 'assets/images/p18.jpg',
+    description: 'Metal keyring featuring the Portsmouth City design.',
     collectionId: 'c_merch',
   ),
 
   // --- HALLOWEEN (c_halloween) ---
   Product(
     id: 'h1',
-    title: 'Limited Edition Spooky Tee',
+    title: 'Spooky Tee',
     price: 15.00,
-    image: 'https://via.placeholder.com/300x300/ff9800/000000?text=Pumpkin+Tee',
+    image: 'assets/images/spooky.jpg',
     description: 'Scary good comfort.',
     collectionId: 'c_halloween',
-  ),
-
-  // --- SIGNATURE & ESSENTIAL (c_signature) ---
-  Product(
-    id: 's1',
-    title: 'Signature Hoodie',
-    price: 32.99,
-    image: 'https://via.placeholder.com/300x300/1a237e/ffffff?text=Signature',
-    description: 'Premium quality hoodie.',
-    collectionId: 'c_signature',
-  ),
-
-  // --- PORTSMOUTH CITY (c_city) ---
-  Product(
-    id: 'pc1',
-    title: 'Portsmouth City Magnet',
-    price: 4.50,
-    image: 'https://via.placeholder.com/300x300/607d8b/ffffff?text=Magnet',
-    description: 'Fridge magnet.',
-    collectionId: 'c_city',
   ),
 
   // --- PRIDE (c_pride) ---
   Product(
     id: 'pr1',
-    title: 'Pride Flag Pin',
+    title: 'Pride Pin',
     price: 3.00,
-    image: 'https://via.placeholder.com/300x300/FFC107/ffffff?text=Pride+Pin',
+    image: 'assets/images/pride.jpg',
     description: 'Wear your pride.',
     collectionId: 'c_pride',
   ),
@@ -76,7 +177,7 @@ final List<Product> dummyProducts = [
     id: 'g1',
     title: 'Graduation Bear',
     price: 12.00,
-    image: 'https://via.placeholder.com/300x300/795548/ffffff?text=Grad+Bear',
+    image: 'assets/images/bear.jpg',
     description: 'A cute bear for your big day.',
     collectionId: 'c_grad',
   ),
@@ -84,5 +185,19 @@ final List<Product> dummyProducts = [
 
 // Simple filter logic
 List<Product> getProductsByCollection(String collectionId) {
+  // If we want "Clothing" to include Grad Hoodies, we can modify logic here
+  // For now, it matches exact collectionId OR includes logic for overlaps
+  if (collectionId == 'c_clothing') {
+     return dummyProducts.where((p) => 
+       p.collectionId == 'c_clothing' || p.title.contains('Graduation Hoodie')
+     ).toList();
+  }
+  
+  if (collectionId == 'c_merch') {
+     return dummyProducts.where((p) => 
+       p.collectionId == 'c_merch' || p.collectionId == 'c_city'
+     ).toList();
+  }
+
   return dummyProducts.where((p) => p.collectionId == collectionId).toList();
 }
