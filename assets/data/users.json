@@ -1,0 +1,12 @@
+[
+  {
+    "email": "student@port.ac.uk",
+    "password": "password123",
+    "name": "Student User"
+  },
+  {
+    "email": "admin@upsu.net",
+    "password": "admin",
+    "name": "Admin User"
+  }
+]
