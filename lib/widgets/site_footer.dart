@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'product_search_delegate.dart'; // Import search logic
 
 class SiteFooter extends StatelessWidget {
   const SiteFooter({super.key});
@@ -6,7 +7,7 @@ class SiteFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF5F5F7), // Light grey background like the image
+      color: const Color(0xFFF5F5F7), 
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       width: double.infinity,
       child: Column(
@@ -19,7 +20,6 @@ class SiteFooter extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           
-          // Winter Break Text
           Row(
             children: const [
               Icon(Icons.ac_unit, size: 16, color: Colors.lightBlue),
@@ -63,7 +63,15 @@ class SiteFooter extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blueGrey),
           ),
           const SizedBox(height: 20),
-          _buildFooterLink('Search'),
+          
+          // SEARCH LINK (Now clickable!)
+          _buildFooterLink('Search', onTap: () {
+            showSearch(
+              context: context, 
+              delegate: ProductSearchDelegate()
+            );
+          }),
+          
           const SizedBox(height: 15),
           _buildFooterLink('Terms & Conditions of Sale Policy'),
 
@@ -76,7 +84,6 @@ class SiteFooter extends StatelessWidget {
           ),
           const SizedBox(height: 15),
           
-          // Email Input
           Container(
             color: Colors.white,
             child: TextField(
@@ -84,7 +91,7 @@ class SiteFooter extends StatelessWidget {
                 hintText: 'Email address',
                 hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(0), // Boxy border
+                  borderRadius: BorderRadius.circular(0), 
                   borderSide: const BorderSide(color: Colors.grey),
                 ),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -94,14 +101,13 @@ class SiteFooter extends StatelessWidget {
           
           const SizedBox(height: 10),
 
-          // Subscribe Button
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4B0082), // Deep Indigo/Purple
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), // Slightly rounded corners
+                backgroundColor: const Color(0xFF4B0082), 
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), 
               ),
               onPressed: () {},
               child: const Text(
@@ -115,7 +121,21 @@ class SiteFooter extends StatelessWidget {
     );
   }
 
-  // Helper for standard footer text lines
+  // Updated Helper: Now accepts an onTap function
+  Widget _buildFooterLink(String text, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.blueGrey[700],
+          fontSize: 16,
+          decoration: onTap != null ? TextDecoration.underline : null, // Underline clickable links
+        ),
+      ),
+    );
+  }
+
   Widget _buildFooterText(String text, {bool isBold = false}) {
     return Text(
       text,
@@ -124,17 +144,6 @@ class SiteFooter extends StatelessWidget {
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         fontStyle: FontStyle.italic,
         fontSize: 14,
-      ),
-    );
-  }
-
-  // Helper for footer links
-  Widget _buildFooterLink(String text) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: Colors.blueGrey[700],
-        fontSize: 16,
       ),
     );
   }
