@@ -63,18 +63,46 @@ class _SignupPageState extends State<SignupPage> {
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4B0082), padding: const EdgeInsets.symmetric(vertical: 15)),
                       onPressed: () {
                         if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
-                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+                           ScaffoldMessenger.of(context).showSnackBar(
+                             const SnackBar(content: Text('Please fill all fields'))
+                           );
                            return;
                         }
 
-                        // 1. Call Signup function
+                        // Call Signup function
                         bool success = _authService.signup(_emailController.text, _passwordController.text, _nameController.text);
                         
                         if (success) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Account Created! Please Login.')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Account Created! Please Login.'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 3),
+                            )
+                          );
                           Navigator.pop(context); // Go back to Login
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Email already exists')));
+                          // Show clear error message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.redAccent,
+                              content: Row(
+                                children: const [
+                                  Icon(Icons.error_outline, color: Colors.white),
+                                  SizedBox(width: 10),
+                                  Text('That email is already registered!'),
+                                ],
+                              ),
+                              duration: const Duration(seconds: 4), // 4 Seconds
+                              action: SnackBarAction(
+                                label: 'DISMISS',
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                },
+                              ),
+                            )
+                          );
                         }
                       },
                       child: const Text('Sign Up', style: TextStyle(color: Colors.white, fontSize: 18)),
