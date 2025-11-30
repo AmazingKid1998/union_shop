@@ -4,7 +4,8 @@ import '../pages/collections_page.dart';
 import '../pages/cart_page.dart';
 import '../pages/login_page.dart';
 import '../models/cart.dart';
-import 'mobile_nav_menu.dart'; // Import the new menu
+import 'mobile_nav_menu.dart'; 
+import 'product_search_delegate.dart'; // Import the search logic
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -37,7 +38,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
           child: Row(
             children: [
-              // LOGO: "The UNION"
+              // LOGO
               GestureDetector(
                 onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const HomePage())),
                 child: RichText(
@@ -69,10 +70,15 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
               
               const Spacer(),
 
-              // SEARCH ICON
+              // SEARCH ICON (UPDATED)
               IconButton(
                 icon: const Icon(Icons.search, size: 26, color: Colors.black87),
-                onPressed: () {}, 
+                onPressed: () {
+                  showSearch(
+                    context: context, 
+                    delegate: ProductSearchDelegate()
+                  );
+                }, 
               ),
 
               // PROFILE ICON
@@ -112,7 +118,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
 
-              // HAMBURGER MENU (Opens the MobileNavMenu)
+              // HAMBURGER MENU
               IconButton(
                 icon: const Icon(Icons.menu, size: 30, color: Colors.black87),
                 onPressed: () {
@@ -121,7 +127,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
                     PageRouteBuilder(
                       pageBuilder: (context, animation, secondaryAnimation) => const MobileNavMenu(),
                       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        const begin = Offset(1.0, 0.0); // Slide in from right
+                        const begin = Offset(1.0, 0.0);
                         const end = Offset.zero;
                         const curve = Curves.ease;
                         var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
