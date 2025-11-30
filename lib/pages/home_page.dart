@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../data/dummy_data.dart'; // Import data
 import '../models/product.dart';  // Import model
-import 'product_page.dart';       // Import the new page
+import 'product_page.dart';       
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
+import '../widgets/home_carousel.dart'; // Import the new carousel
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,22 +16,12 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. Hero Section
-            Container(
-              height: 300,
-              width: double.infinity,
-              color: Colors.indigo,
-              alignment: Alignment.center,
-              child: const Text(
-                'BIG SALE! 20% OFF!', 
-                style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-            ),
+            // 1. CAROUSEL SECTION (Replaces the old static banner)
+            const HomeCarousel(),
             
             const SizedBox(height: 40),
 
-            // 2. Featured Section (Now Dynamic!)
+            // 2. Featured Section
             const Text('Essential Range', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             
             const SizedBox(height: 20),
@@ -39,7 +30,8 @@ class HomePage extends StatelessWidget {
             Wrap(
               spacing: 20,
               runSpacing: 20,
-              children: dummyProducts.map((product) {
+              // Show just the first 4 items for the homepage
+              children: dummyProducts.take(4).map((product) {
                 return _buildProductItem(context, product);
               }).toList(),
             ),
@@ -58,7 +50,6 @@ class HomePage extends StatelessWidget {
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // Navigate to the Product Details Page
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -68,28 +59,20 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         width: 150,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[300]!),
-          borderRadius: BorderRadius.circular(10),
-        ),
+        // Removed border to look cleaner
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Image
             Container(
-              height: 120,
+              height: 150,
               width: double.infinity,
               color: Colors.grey[200],
-              child: Image.network(product.image, fit: BoxFit.cover),
+              child: Image.asset(product.image, fit: BoxFit.cover),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text('£${product.price}'),
-                ],
-              ),
-            ),
+            const SizedBox(height: 10),
+            Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text('£${product.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.grey[700])),
           ],
         ),
       ),
