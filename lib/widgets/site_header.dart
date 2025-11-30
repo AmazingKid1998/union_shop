@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import '../pages/home_page.dart';
-import '../pages/collections_page.dart';
-import '../pages/cart_page.dart';
-import '../pages/login_page.dart';
-import '../models/cart.dart';
+import '../models/cart.dart'; 
 import 'mobile_nav_menu.dart'; 
-import 'product_search_delegate.dart'; // Import the search logic
+import 'product_search_delegate.dart'; // Import search
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   const SiteHeader({super.key});
@@ -38,9 +34,9 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
           ),
           child: Row(
             children: [
-              // LOGO
+              // LOGO (Click goes to '/')
               GestureDetector(
-                onTap: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const HomePage())),
+                onTap: () => Navigator.pushReplacementNamed(context, '/'),
                 child: RichText(
                   text: const TextSpan(
                     children: [
@@ -70,7 +66,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
               
               const Spacer(),
 
-              // SEARCH ICON (UPDATED)
+              // SEARCH ICON (Triggers Search Delegate)
               IconButton(
                 icon: const Icon(Icons.search, size: 26, color: Colors.black87),
                 onPressed: () {
@@ -81,22 +77,22 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
                 }, 
               ),
 
-              // PROFILE ICON
+              // PROFILE ICON (Goes to '/login')
               IconButton(
                 icon: const Icon(Icons.person_outline, size: 26, color: Colors.black87),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginPage()));
+                  Navigator.pushNamed(context, '/login');
                 },
               ),
 
-              // CART ICON WITH BADGE
+              // CART ICON (Goes to '/cart')
               Stack(
                 alignment: Alignment.center,
                 children: [
                   IconButton(
                     icon: const Icon(Icons.shopping_bag_outlined, size: 26, color: Colors.black87),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const CartPage()))
+                      Navigator.pushNamed(context, '/cart')
                           .then((_) => (context as Element).markNeedsBuild());
                     },
                   ),
@@ -118,7 +114,7 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
 
-              // HAMBURGER MENU
+              // HAMBURGER MENU (Opens Mobile Menu)
               IconButton(
                 icon: const Icon(Icons.menu, size: 30, color: Colors.black87),
                 onPressed: () {
