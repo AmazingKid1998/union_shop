@@ -4,9 +4,11 @@ import '../pages/about_page.dart';
 import '../pages/collections_page.dart';
 import '../pages/print_shack_page.dart';
 import '../pages/collection_detail_page.dart';
-import '../models/cart.dart'; // To show cart count
+import '../models/cart.dart'; 
 import '../pages/cart_page.dart';
 import '../pages/login_page.dart';
+// Note: We don't strictly need to import product_search_delegate here anymore if we aren't using it, 
+// but keeping it doesn't hurt.
 
 class MobileNavMenu extends StatefulWidget {
   const MobileNavMenu({super.key});
@@ -16,8 +18,6 @@ class MobileNavMenu extends StatefulWidget {
 }
 
 class _MobileNavMenuState extends State<MobileNavMenu> {
-  // Track which "screen" of the menu is visible
-  // 0 = Main Menu, 1 = Shop Menu
   int _menuIndex = 0;
 
   @override
@@ -27,7 +27,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
       body: SafeArea(
         child: Column(
           children: [
-            // --- HEADER SECTION ---
+            // --- HEADER ---
             Container(
               height: 60,
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -51,7 +51,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // HEADER: Main View (Logo + Icons + X)
+  // HEADER: Main View (Search Icon Removed)
   Widget _buildMainHeader(BuildContext context) {
     return Row(
       children: [
@@ -64,7 +64,9 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
           ),
         ),
         const Spacer(),
-        IconButton(icon: const Icon(Icons.search, size: 26), onPressed: () {}),
+        
+        // SEARCH ICON WAS HERE - NOW REMOVED
+        
         IconButton(icon: const Icon(Icons.person_outline, size: 26), onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const LoginPage()))),
         
         // Cart Icon
@@ -84,7 +86,7 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
               ),
           ],
         ),
-        // Close Button (X)
+        // Close Button
         IconButton(
           icon: const Icon(Icons.close, size: 30),
           onPressed: () => Navigator.pop(context),
@@ -93,18 +95,17 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // HEADER: Shop View (Back Arrow + "Shop")
+  // HEADER: Shop View
   Widget _buildShopHeader() {
     return Row(
       children: [
-        // Divider on the right of the arrow
         Container(
           decoration: const BoxDecoration(border: Border(right: BorderSide(color: Colors.black12))),
           child: IconButton(
             icon: const Icon(Icons.chevron_left, size: 30, color: Colors.black),
             onPressed: () {
               setState(() {
-                _menuIndex = 0; // Go back to Main
+                _menuIndex = 0; 
               });
             },
           ),
@@ -115,14 +116,14 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // CONTENT: Main Menu List
+  // CONTENT: Main Menu
   Widget _buildMainMenu() {
     return ListView(
       children: [
         _buildMenuItem('Home', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const HomePage()))),
         _buildMenuItem('Shop', hasArrow: true, onTap: () {
           setState(() {
-            _menuIndex = 1; // Go to Shop Menu
+            _menuIndex = 1;
           });
         }),
         _buildMenuItem('The Print Shack', hasArrow: true, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const PrintShackPage()))),
@@ -133,9 +134,8 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // CONTENT: Shop Menu List (UPDATED FOR NEW MODEL)
+  // CONTENT: Shop Menu
   Widget _buildShopMenu() {
-    // Helper to navigate using just ID and Title
     void navTo(String id, String title) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => CollectionDetailPage(
         collectionId: id, 
@@ -156,7 +156,6 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
     );
   }
 
-  // HELPER: Builds a single row in the menu
   Widget _buildMenuItem(String text, {bool hasArrow = false, bool isLast = false, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
