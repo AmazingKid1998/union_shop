@@ -16,28 +16,30 @@ class _PrintShackPageState extends State<PrintShackPage> {
   final _textController = TextEditingController();
   final String _productImage = 'assets/images/print_preview.jpg';
 
-  // 1. The List of Options from your image
-  final List<String> _customisationOptions = [
-    'One Line of Text',
-    'Two Lines of Text',
-    'Three Lines of Text',
-    'Four Lines of Text',
-    'Small Logo (Chest)',
-    'Large Logo (Back)'
-  ];
+  // 1. Define Options and their Exact Prices
+  final Map<String, double> _pricingMap = {
+    'One Line of Text': 3.00,
+    'Two Lines of Text': 5.00,
+    'Three Lines of Text': 7.50,
+    'Four Lines of Text': 10.00,
+    'Small Logo (Chest)': 3.00,
+    'Large Logo (Back)': 6.00,
+  };
 
-  // 2. Track the selected value
-  String? _selectedOption;
+  // 2. Track the selected value (Default to first option)
+  late String _selectedOption;
+  
+  // Track Quantity
+  int _quantity = 1;
 
-  // 3. Dynamic Price Calculator
-  double get _currentPrice {
-    double basePrice = 3.00;
-    // If an option is selected, add £2.50
-    if (_selectedOption != null) {
-      return basePrice + 2.50;
-    }
-    return basePrice;
+  @override
+  void initState() {
+    super.initState();
+    _selectedOption = _pricingMap.keys.first; // Default: One Line of Text
   }
+
+  // 3. Helper to get current price
+  double get _currentPrice => _pricingMap[_selectedOption]!;
 
   @override
   Widget build(BuildContext context) {
@@ -77,42 +79,50 @@ class _PrintShackPageState extends State<PrintShackPage> {
 
                   const SizedBox(height: 30),
 
-                  // DETAILS HEADER
-                  const Text('Personalise Text', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'Georgia')),
+                  // TITLE & PRICE
+                  const Text('Personalisation', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'Georgia', color: Color(0xFF333333))),
                   const SizedBox(height: 10),
                   
-                  // DYNAMIC PRICE DISPLAY
                   Text(
                     '£${_currentPrice.toStringAsFixed(2)}', 
-                    style: const TextStyle(fontSize: 24, color: Colors.grey)
+                    style: TextStyle(fontSize: 24, color: Colors.blueGrey[700], fontWeight: FontWeight.bold)
                   ),
+                  const Text('Tax included.', style: TextStyle(color: Colors.grey, fontSize: 14)),
                   
                   const SizedBox(height: 30),
 
-                  // --- NEW DROPDOWN SECTION ---
-                  const Text('Choose one', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
+                  // --- DYNAMIC LABEL ---
+                  // "Per Line: One Line of Text"
+                  Text(
+                    'Per Line:  $_selectedOption', 
+                    style: TextStyle(color: Colors.grey[700], fontSize: 16)
+                  ),
                   const SizedBox(height: 5),
+
+                  // --- DROPDOWN ---
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
+                      border: Border.all(color: Colors.black54), // Darker border like screenshot
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedOption,
                         isExpanded: true,
-                        hint: const Text("Select an option"),
-                        items: _customisationOptions.map((String option) {
+                        icon: const Icon(Icons.arrow_drop_down),
+                        items: _pricingMap.keys.map((String option) {
                           return DropdownMenuItem<String>(
                             value: option,
                             child: Text(option),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
-                          setState(() {
-                            _selectedOption = newValue;
-                          });
+                          if (newValue != null) {
+                            setState(() {
+                              _selectedOption = newValue;
+                            });
+                          }
                         },
                       ),
                     ),
@@ -120,15 +130,37 @@ class _PrintShackPageState extends State<PrintShackPage> {
 
                   const SizedBox(height: 20),
 
-                  // TEXT INPUT FORM
-                  const Text('Text', style: TextStyle(fontWeight: FontWeight.bold)),
+                  // --- TEXT INPUT ---
+                  const Text('Personalisation Line 1:', style: TextStyle(color: Colors.grey, fontSize: 16)),
                   const SizedBox(height: 5),
                   TextField(
                     controller: _textController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      hintText: "Enter your custom text here..."
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // --- QUANTITY ---
+                  const Text('Quantity', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  const SizedBox(height: 5),
+                  SizedBox(
+                    width: 80,
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      controller: TextEditingController(text: '$_quantity'),
+                      onChanged: (value) {
+                        setState(() {
+                          _quantity = int.tryParse(value) ?? 1;
+                        });
+                      },
                     ),
                   ),
 
@@ -139,34 +171,29 @@ class _PrintShackPageState extends State<PrintShackPage> {
                     width: double.infinity,
                     child: OutlinedButton(
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.black, width: 2),
+                        side: const BorderSide(color: Color(0xFF4B0082), width: 1.5), // Purple border
                         padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))
                       ),
                       onPressed: () {
-                         // Validation
-                         if (_selectedOption == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select an option from the dropdown')));
-                            return;
-                         }
                          if (_textController.text.isEmpty) {
-                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter your text')));
+                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter your custom text')));
                            return;
                          }
 
-                         // Add to global cart
-                         final customProduct = Product(
-                           id: 'custom_${DateTime.now().millisecondsSinceEpoch}',
-                           title: 'Personalise Text',
-                           // USE THE DYNAMIC PRICE HERE
-                           price: _currentPrice,
-                           image: _productImage,
-                           // Save both the Option and the Text in the description
-                           description: '$_selectedOption: "${_textController.text}"', 
-                           collectionId: 'custom',
-                         );
-
-                         globalCart.add(customProduct);
+                         // Add to global cart (Loop for quantity)
+                         for (int i = 0; i < _quantity; i++) {
+                           final customProduct = Product(
+                             id: 'custom_${DateTime.now().millisecondsSinceEpoch}_$i',
+                             title: 'Personalisation',
+                             price: _currentPrice,
+                             image: _productImage,
+                             // Description format: "One Line of Text: hello"
+                             description: '$_selectedOption: "${_textController.text}"', 
+                             collectionId: 'custom',
+                           );
+                           globalCart.add(customProduct);
+                         }
 
                          // Navigate to Cart
                          Navigator.push(
@@ -174,7 +201,10 @@ class _PrintShackPageState extends State<PrintShackPage> {
                            MaterialPageRoute(builder: (context) => const CartPage())
                          ).then((_) => (context as Element).markNeedsBuild());
                       },
-                      child: const Text('ADD TO CART', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                      child: const Text(
+                        'ADD TO CART', 
+                        style: TextStyle(color: Color(0xFF4B0082), fontWeight: FontWeight.bold, letterSpacing: 1.5)
+                      ),
                     ),
                   ),
                 ],
