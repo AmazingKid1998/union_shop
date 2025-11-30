@@ -16,7 +16,7 @@ class _PrintShackPageState extends State<PrintShackPage> {
   final _textController = TextEditingController();
 
   // Define the image path here so we can use it in the display AND the cart
-  final String _productImage = 'assets/images/print_shack.jpg';
+  final String _productImage = 'assets/images/print_preview.jpg';
 
   @override
   Widget build(BuildContext context) {
