@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
     final shopVM = Provider.of<ShopViewModel>(context);
     final allProducts = shopVM.products;
 
-    // 1. Get unique categories present in the product list
+    // 1. Get unique categories
     final Set<String> uniqueCategories = {};
     for (var product in allProducts) {
       uniqueCategories.add(product.collectionId);
@@ -30,9 +30,7 @@ class HomePage extends StatelessWidget {
             
             const SizedBox(height: 40),
 
-            const Text('Essential Range', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            
-            const SizedBox(height: 20),
+            // "Essential Range" Text Removed
             
             // 2. Loop through each category and build a section
             if (allProducts.isEmpty)
@@ -43,7 +41,6 @@ class HomePage extends StatelessWidget {
                    // Find the first product for this category
                    final product = allProducts.firstWhere((p) => p.collectionId == categoryId);
                    
-                   // Determine a display name for the category (simple mapping or formatting)
                    String categoryName = _formatCategoryName(categoryId);
 
                    return Column(
@@ -64,7 +61,7 @@ class HomePage extends StatelessWidget {
                        // The Single Product Card
                        _buildProductItem(context, product),
                        
-                       const SizedBox(height: 30), // Spacing between categories
+                       const SizedBox(height: 30),
                      ],
                    );
                  }).toList(),
@@ -79,7 +76,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Helper to make category IDs look nice (e.g. c_clothing -> Clothing)
+  // Helper to make category IDs look nice
   String _formatCategoryName(String id) {
     switch (id) {
       case 'c_clothing': return 'Clothing';
@@ -104,9 +101,9 @@ class HomePage extends StatelessWidget {
         );
       },
       child: Container(
-        width: 200, // Slightly wider for this layout
+        width: 200,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center, // Center align for this layout
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: 200,
