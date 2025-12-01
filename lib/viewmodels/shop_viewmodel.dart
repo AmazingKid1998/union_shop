@@ -8,7 +8,7 @@ class ShopViewModel extends ChangeNotifier {
   List<Product> _products = [];
   List<Product> get products => _products;
 
-  // Constructor loads data immediately
+  // Load data immediately upon creation
   ShopViewModel() {
     _loadProducts();
   }
@@ -27,6 +27,12 @@ class ShopViewModel extends ChangeNotifier {
     return _productRepository.getSaleProducts();
   }
   
+  // FIX: EXPOSE getProductById method for use by tests and potentially UI/navigation
+  Product getProductById(String id) {
+    return _productRepository.getProductById(id);
+  }
+
+  // Search logic
   List<Product> search(String query) {
     return _products.where((p) => p.title.toLowerCase().contains(query.toLowerCase())).toList();
   }
