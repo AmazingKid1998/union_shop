@@ -80,7 +80,6 @@ final List<Product> _allProducts = [
   ),
 
   // 2. MERCHANDISE (Merchandise)
-  // Let's put TWO items on sale as requested
   Product(
     id: 'p_merch_1',
     title: 'Lanyard',
@@ -123,10 +122,6 @@ final List<Product> _allProducts = [
     description: 'University branded tie',
     collectionId: 'c_merch',
   ),
-  
-  // CATEGORY PLACEHOLDERS
-  Product(id: 'cat_clothing', title: 'Clothing Cat', price: 0, image: 'assets/images/clothing_cat.jpg', description: '', collectionId: 'hidden'),
-  Product(id: 'cat_merch', title: 'Merch Cat', price: 0, image: 'assets/images/merch_cat.jpg', description: '', collectionId: 'hidden'),
 ];
 
 class ProductRepository {
