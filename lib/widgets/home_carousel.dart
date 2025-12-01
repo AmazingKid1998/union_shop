@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../pages/collections_page.dart';
-import '../pages/print_shack_page.dart';
 
 class HomeCarousel extends StatefulWidget {
   const HomeCarousel({super.key});
@@ -13,21 +11,21 @@ class _HomeCarouselState extends State<HomeCarousel> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
-  // Define the 2 slides from your screenshots
+  // Define the slides with correct Named Routes
   final List<Map<String, dynamic>> _slides = [
     {
-      'image': 'assets/images/print_preview.jpg', // Use your print shack image
+      'image': 'assets/images/print_preview.jpg', 
       'title': 'The Print Shack',
       'description': 'Let’s create something uniquely you with our personalisation service — From £3 for one line of text!',
       'btnText': 'FIND OUT MORE',
       'route': '/print-shack', // Named route
     },
     {
-      'image': 'assets/images/clothing_cat.jpg', // Use a clothing image
+      'image': 'assets/images/clothing_cat.jpg', 
       'title': 'Essential Range -\nOver 20% OFF!',
       'description': 'Over 20% off our Essential Range. Come and grab yours while stock lasts!',
       'btnText': 'BROWSE COLLECTION',
-      'route': '/shop', // Named route
+      'route': '/',
     },
   ];
 
@@ -37,14 +35,15 @@ class _HomeCarouselState extends State<HomeCarousel> {
       children: [
         // 1. THE SLIDER AREA
         SizedBox(
-          height: 550, // Height to fit image + text below
+          height: 550, 
           child: PageView.builder(
             controller: _pageController,
             itemCount: _slides.length,
             onPageChanged: (index) {
               setState(() {
                 _currentIndex = index;
-              });
+              }
+              );
             },
             itemBuilder: (context, index) {
               final slide = _slides[index];
@@ -63,7 +62,7 @@ class _HomeCarouselState extends State<HomeCarousel> {
                             errorBuilder: (c,o,s) => Container(color: Colors.grey[300], child: const Icon(Icons.image, size: 50)),
                           ),
                         ),
-                        // Pause Button (Visual Only - Matches screenshot)
+                        // Pause Button (Visual Only)
                         Positioned(
                           top: 10,
                           right: 10,
@@ -105,12 +104,12 @@ class _HomeCarouselState extends State<HomeCarousel> {
                         ),
                         const SizedBox(height: 30),
                         
-                        // BUTTON
+                        // BUTTON (Uses Navigator.pushNamed)
                         SizedBox(
                           width: 200,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4B0082), // Dark Purple
+                              backgroundColor: const Color(0xFF4B0082), 
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))
                             ),
