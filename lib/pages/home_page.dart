@@ -1,44 +1,47 @@
 import 'package:flutter/material.dart';
-import '../data/dummy_data.dart'; // Import data
-import '../models/product.dart';  // Import model
+import 'package:provider/provider.dart';
+import '../viewmodels/shop_viewmodel.dart';
+import '../models/product.dart';
 import 'product_page.dart';       
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
-import '../widgets/home_carousel.dart'; // Import the new carousel
+import '../widgets/home_carousel.dart'; 
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Access the ShopViewModel for data
+    final shopVM = Provider.of<ShopViewModel>(context);
+    final products = shopVM.products;
+
     return Scaffold(
       appBar: const SiteHeader(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. CAROUSEL SECTION (Replaces the old static banner)
             const HomeCarousel(),
             
             const SizedBox(height: 40),
 
-            // 2. Featured Section
             const Text('Essential Range', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             
             const SizedBox(height: 20),
             
-            // Generate widgets from our dummy data list
+            // Display products using ViewModel data
             Wrap(
               spacing: 20,
               runSpacing: 20,
-              // Show just the first 4 items for the homepage
-              children: dummyProducts.take(4).map((product) {
-                return _buildProductItem(context, product);
-              }).toList(),
+              children: products.isEmpty 
+                  ? [const Center(child: CircularProgressIndicator())]
+                  : products.take(4).map((product) {
+                    return _buildProductItem(context, product);
+                  }).toList(),
             ),
 
             const SizedBox(height: 40),
 
-            // 3. Footer
             const SiteFooter(),
           ],
         ),
@@ -59,7 +62,6 @@ class HomePage extends StatelessWidget {
       },
       child: Container(
         width: 150,
-        // Removed border to look cleaner
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -72,7 +74,18 @@ class HomePage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-            Text('£${product.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.grey[700])),
+            
+            // Price Logic (handles sale)
+            if (product.oldPrice != null)
+              Row(
+                children: [
+                   Text('£${product.oldPrice!.toStringAsFixed(2)}', style: const TextStyle(decoration: TextDecoration.lineThrough, color: Colors.grey, fontSize: 13)),
+                   const SizedBox(width: 5),
+                   Text('£${product.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.blueGrey[800], fontWeight: FontWeight.bold, fontSize: 14)),
+                ],
+              )
+            else
+              Text('£${product.price.toStringAsFixed(2)}', style: TextStyle(color: Colors.grey[700])),
           ],
         ),
       ),
