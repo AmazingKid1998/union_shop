@@ -16,11 +16,9 @@ class _CartPageState extends State<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Access the Cart ViewModel (View is reading from ViewModel)
     return Consumer<CartViewModel>(
       builder: (context, cartVM, child) {
-        // FIX: Using uniqueProducts getter, which is correctly defined in the ViewModel.
-        final uniqueProducts = cartVM.uniqueProducts; 
+        final uniqueProducts = cartVM.uniqueProducts;
 
         return Scaffold(
           appBar: const SiteHeader(),
@@ -29,14 +27,11 @@ class _CartPageState extends State<CartPage> {
               children: [
                 const SizedBox(height: 30),
                 
-                // TITLE SECTION
                 const Text('Your cart', style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF333333))),
                 const SizedBox(height: 10),
                 
-                // 1. CONTINUE SHOPPING LINK
                 GestureDetector(
                   onTap: () {
-                    // Using Named Route
                     Navigator.pushNamed(context, '/shop');
                   },
                   child: const Text(
@@ -47,7 +42,7 @@ class _CartPageState extends State<CartPage> {
 
                 const SizedBox(height: 40),
 
-                // TABLE HEADERS
+                // HEADERS (Hide on small screens if needed, but keeping for now)
                 if (uniqueProducts.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -62,7 +57,6 @@ class _CartPageState extends State<CartPage> {
                 
                 const Divider(),
 
-                // CART LIST
                 if (uniqueProducts.isEmpty)
                   const Padding(
                     padding: EdgeInsets.all(40.0),
@@ -72,21 +66,19 @@ class _CartPageState extends State<CartPage> {
                   ListView.separated(
                     shrinkWrap: true, 
                     physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20), // Reduced padding
                     itemCount: uniqueProducts.length, 
                     separatorBuilder: (c, i) => const Divider(height: 40),
                     itemBuilder: (context, index) {
                       final product = uniqueProducts[index];
-                      // Pass ViewModel instance and product to the row widget
                       return CartItemRow(
-                        key: ValueKey(product.id), // Key is crucial for widget stability
+                        key: ValueKey(product.id), 
                         product: product,
                         cartVM: cartVM,
                       );
                     },
                   ),
 
-                // FOOTER / CHECKOUT SECTION
                 if (uniqueProducts.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -108,7 +100,7 @@ class _CartPageState extends State<CartPage> {
                                    ],
                                  ),
                                  const SizedBox(height: 10),
-                                 const Text('Shipping, taxes, and discounts codes calculated at checkout.', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                                 const Text('Shipping calculated at checkout.', style: TextStyle(color: Colors.grey, fontSize: 12)),
                                  const SizedBox(height: 20),
                                  SizedBox(
                                    width: 300, 
@@ -119,7 +111,7 @@ class _CartPageState extends State<CartPage> {
                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))
                                      ),
                                      onPressed: () {
-                                       cartVM.clear(); // Use ViewModel action
+                                       cartVM.clear(); 
                                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order Placed!')));
                                      },
                                      child: const Text('Check out', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -144,7 +136,6 @@ class _CartPageState extends State<CartPage> {
   }
 }
 
-// --- NEW WIDGET: CART ITEM ROW (Handles Edit Logic and uses ViewModel) ---
 class CartItemRow extends StatefulWidget {
   final Product product;
   final CartViewModel cartVM;
@@ -166,7 +157,6 @@ class _CartItemRowState extends State<CartItemRow> {
   @override
   void initState() {
     super.initState();
-    // Initialize controller with current quantity from ViewModel
     final initialQuantity = widget.cartVM.getQuantity(widget.product);
     _quantityController = TextEditingController(text: initialQuantity.toString());
   }
@@ -174,7 +164,6 @@ class _CartItemRowState extends State<CartItemRow> {
   @override
   void didUpdateWidget(covariant CartItemRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Update controller text if the widget rebuilds and we are not currently editing
     if (!_isEditing) {
       final newQuantity = widget.cartVM.getQuantity(widget.product);
       if (_quantityController.text != newQuantity.toString()) {
@@ -189,30 +178,22 @@ class _CartItemRowState extends State<CartItemRow> {
     super.dispose();
   }
 
-  // LOGIC TO UPDATE GLOBAL CART (Now calls ViewModel methods)
   void _updateQuantity() {
     int newQuantity = int.tryParse(_quantityController.text) ?? 1;
     if (newQuantity < 1) newQuantity = 1;
-
-    // Call the ViewModel method to update the repository
     widget.cartVM.updateQuantity(widget.product, newQuantity);
-
-    // Close edit mode
     setState(() {
       _isEditing = false;
     });
   }
   
-  // Logic to handle cancelling the edit and resetting the text field
   void _cancelEdit() {
     setState(() {
       _isEditing = false;
-      // Reset controller text to the current, correct quantity from the ViewModel
       _quantityController.text = widget.cartVM.getQuantity(widget.product).toString();
     });
   }
   
-  // Logic to remove all copies
   void _removeAll() {
     widget.cartVM.removeAllById(widget.product.id);
   }
@@ -220,114 +201,135 @@ class _CartItemRowState extends State<CartItemRow> {
   @override
   Widget build(BuildContext context) {
     final isCustom = widget.product.id.startsWith('custom_');
-
-    // Calculate live count and total price
     int realCount = widget.cartVM.getQuantity(widget.product);
     double rowTotal = widget.product.price * realCount;
     
-    // We update the controller text here if the ViewModel changed the quantity outside of the editing flow
     if (!_isEditing && _quantityController.text != realCount.toString()) {
       _quantityController.text = realCount.toString();
     }
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // 1. PRODUCT IMAGE
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!)),
-          child: Image.asset(widget.product.image, fit: BoxFit.cover, errorBuilder: (c,o,s) => const Icon(Icons.image_not_supported)),
-        ),
-
-        const SizedBox(width: 20),
-
-        // 2. MIDDLE COLUMN
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // --- TITLE WITH QUANTITY INDICATOR (x2) ---
-              Text(
-                realCount > 1 
-                    ? '${widget.product.title} (x$realCount)'
-                    : widget.product.title, 
-                style: const TextStyle(fontSize: 16, color: Color(0xFF333333), fontWeight: FontWeight.w500)
-              ),
-              const SizedBox(height: 8),
-
-              if (isCustom) 
-                _buildCustomDetails(widget.product.description),
-                
-              const SizedBox(height: 15),
-
-              // --- EDIT MODE CONTROLS ---
-              if (_isEditing)
-                Row(
-                  children: [
-                    // Remove Link
-                    GestureDetector(
-                      onTap: _removeAll,
-                      child: const Text('Remove', style: TextStyle(decoration: TextDecoration.underline, color: Color(0xFF4B0082))),
-                    ),
-                    
-                    const Spacer(),
-                    
-                    const Text('Quantity  '),
-                    SizedBox(
-                      width: 50,
-                      height: 35,
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        keyboardType: TextInputType.number,
-                        controller: _quantityController, // Fixed: Use the instantiated controller
-                        decoration: const InputDecoration(contentPadding: EdgeInsets.zero, border: OutlineInputBorder()),
-                        onSubmitted: (val) => _updateQuantity(),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-
-                    // UPDATE BUTTON
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4B0082), padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))),
-                      onPressed: _updateQuantity, 
-                      child: const Text('UPDATE', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold))
-                    )
-                  ],
-                ),
-            ],
+    // FIXED LAYOUT: Use IntrinsicHeight so the vertical line/spacing works better
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. PRODUCT IMAGE (Fixed Width)
+          Container(
+            width: 80, // Reduced slightly for mobile safety
+            height: 80,
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey[300]!)),
+            child: Image.asset(widget.product.image, fit: BoxFit.cover, errorBuilder: (c,o,s) => const Icon(Icons.image_not_supported)),
           ),
-        ),
 
-        const SizedBox(width: 10),
+          const SizedBox(width: 15),
 
-        // 3. RIGHT COLUMN
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // Show the total price for this BATCH of items
-            Text('£${rowTotal.toStringAsFixed(2)}', style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 10),
-            
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12), side: const BorderSide(color: Color(0xFF4B0082)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)), minimumSize: const Size(0, 30)),
-              onPressed: _isEditing ? _cancelEdit : () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-              child: Text(_isEditing ? 'CANCEL' : 'EDIT', style: const TextStyle(fontSize: 12, color: Color(0xFF4B0082), fontWeight: FontWeight.bold)),
+          // 2. MIDDLE COLUMN (Expanded to take remaining space)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title & Qty
+                Text(
+                  realCount > 1 
+                      ? '${widget.product.title} (x$realCount)'
+                      : widget.product.title, 
+                  style: const TextStyle(fontSize: 15, color: Color(0xFF333333), fontWeight: FontWeight.w600)
+                ),
+                
+                const SizedBox(height: 5),
+
+                if (isCustom) 
+                  _buildCustomDetails(widget.product.description),
+                  
+                const SizedBox(height: 10),
+
+                // --- EDIT MODE CONTROLS (WRAPPED FOR SAFETY) ---
+                if (_isEditing)
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: [
+                      // Remove Link
+                      GestureDetector(
+                        onTap: _removeAll,
+                        child: const Text('Remove', style: TextStyle(decoration: TextDecoration.underline, color: Color(0xFF4B0082), fontSize: 13)),
+                      ),
+                      
+                      // Quantity Row
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Qty ', style: TextStyle(fontSize: 13)),
+                          SizedBox(
+                            width: 40,
+                            height: 30,
+                            child: TextField(
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(fontSize: 13),
+                              keyboardType: TextInputType.number,
+                              controller: _quantityController,
+                              decoration: const InputDecoration(contentPadding: EdgeInsets.zero, border: OutlineInputBorder()),
+                              onSubmitted: (val) => _updateQuantity(),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // UPDATE BUTTON (Small)
+                      SizedBox(
+                        height: 30,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4B0082), 
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))
+                          ),
+                          onPressed: _updateQuantity, 
+                          child: const Text('UPDATE', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold))
+                        ),
+                      )
+                    ],
+                  ),
+              ],
             ),
-          ],
-        )
-      ],
+          ),
+
+          const SizedBox(width: 10),
+
+          // 3. RIGHT COLUMN (Price + Edit/Cancel Button)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text('£${rowTotal.toStringAsFixed(2)}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              
+              SizedBox(
+                height: 30,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 10), 
+                    side: const BorderSide(color: Color(0xFF4B0082)), 
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2))
+                  ),
+                  onPressed: _isEditing ? _cancelEdit : () {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                  },
+                  child: Text(_isEditing ? 'CANCEL' : 'EDIT', style: const TextStyle(fontSize: 11, color: Color(0xFF4B0082), fontWeight: FontWeight.bold)),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
-  // --- HELPER TO PARSE TEXT (Same as before) ---
   Widget _buildCustomDetails(String description) {
-    if (!description.contains(':')) return Text(description, style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.grey));
+    if (!description.contains(':')) return Text(description, style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: Colors.grey));
     try {
       final int splitIndex = description.indexOf(':');
       final String optionName = description.substring(0, splitIndex);
@@ -336,19 +338,9 @@ class _CartItemRowState extends State<CartItemRow> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Per Line: $optionName', style: TextStyle(color: Colors.blueGrey[700], fontSize: 13, fontStyle: FontStyle.italic)),
-          const SizedBox(height: 5),
+          Text('Per Line: $optionName', style: TextStyle(color: Colors.blueGrey[700], fontSize: 12, fontStyle: FontStyle.italic)),
           ...List.generate(lines.length, (index) {
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 2.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Personalisation', style: TextStyle(color: Colors.blue[800], fontSize: 13)),
-                  Text('Line ${index + 1}: ${lines[index]}', style: TextStyle(color: Colors.blueGrey[600], fontSize: 13, fontStyle: FontStyle.italic)),
-                ],
-              ),
-            );
+            return Text('Line ${index + 1}: ${lines[index]}', style: TextStyle(color: Colors.blueGrey[600], fontSize: 12, fontStyle: FontStyle.italic));
           }),
         ],
       );
