@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:union_shop/main.dart'; // Adjust path if needed
+import 'package:union_shop/main.dart'; 
 import 'package:union_shop/viewmodels/cart_viewmodel.dart';
 import 'package:union_shop/viewmodels/shop_viewmodel.dart';
 import 'package:union_shop/pages/print_shack_page.dart';
@@ -49,11 +49,15 @@ void main() {
       // Find the Add button
       final addButton = find.text('ADD TO CART');
       
+      // FIX 1: Ensure the button is visible by scrolling to it
+      await tester.ensureVisible(addButton);
+      await tester.pumpAndSettle();
+
       // Tap it without entering text
       await tester.tap(addButton);
-      await tester.pump(); // Trigger frame
+      await tester.pump(); // Trigger frame for SnackBar to appear
 
-      // Expect a SnackBar with error message
+      // FIX 2: Verify SnackBar error message
       expect(find.textContaining('Please enter text'), findsOneWidget);
     });
 
@@ -62,23 +66,26 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Enter Text
-      // Find the text field (it's the one under "Personalisation Line 1")
       final textField = find.byType(TextField).first; 
       await tester.enterText(textField, 'My Custom Text');
       await tester.pump();
 
-      // 2. Change Quantity (Optional, but good to test)
-      // Find the quantity field (it has '1' initially)
+      // 2. Change Quantity 
       final qtyField = find.widgetWithText(TextField, '1');
       await tester.enterText(qtyField, '2');
       await tester.pump();
 
-      // 3. Tap Add to Cart
-      await tester.tap(find.text('ADD TO CART'));
+      // 3. Find and ensure visibility of the Add to Cart button
+      final addToCartButton = find.text('ADD TO CART');
+      await tester.ensureVisible(addToCartButton);
+      await tester.pumpAndSettle(); // Wait for scrolling animation to finish
+
+      // 4. Tap Add to Cart
+      await tester.tap(addToCartButton);
       await tester.pumpAndSettle(); // Wait for navigation
 
-      // 4. Verify Navigation
-      // Should satisfy the expectation that we moved to the '/cart' route (which renders "Cart Page" text in our test harness)
+      // 5. Verify Navigation
+      // We check for the destination route's placeholder text
       expect(find.text('Cart Page'), findsOneWidget);
     });
   });
