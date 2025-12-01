@@ -15,29 +15,47 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  // Local state for quantity selector (optional feature)
-  int _quantity = 1; 
+  int _quantity = 1;
+  
+  // State for the currently selected image and variant name
+  late String _currentImage;
+  String? _selectedVariant;
+
+  @override
+  void initState() {
+    super.initState();
+    // Default to the main product image
+    _currentImage = widget.product.image;
+    
+    // If variants exist, select the first one by default
+    if (widget.product.variants != null && widget.product.variants!.isNotEmpty) {
+      _selectedVariant = widget.product.variants!.keys.first;
+      _currentImage = widget.product.variants![_selectedVariant]!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Access the Cart ViewModel (for Add to Cart functionality)
     final cartVM = Provider.of<CartViewModel>(context, listen: false);
     final product = widget.product;
-    
-    // Check if on sale
     final bool isOnSale = product.oldPrice != null;
+    final bool hasVariants = product.variants != null && product.variants!.isNotEmpty;
 
     return Scaffold(
       appBar: const SiteHeader(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Product Image
+            // 1. PRODUCT IMAGE (Updates when variant changes)
             Container(
-              height: 300,
+              height: 350,
               width: double.infinity,
-              color: Colors.grey[100],
-              child: Image.asset(product.image, fit: BoxFit.cover),
+              color: Colors.white,
+              child: Image.asset(
+                _currentImage, // Use the state variable
+                fit: BoxFit.contain, // Changed to contain so we see the full shirt
+                errorBuilder: (c,o,s) => const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey)),
+              ),
             ),
             
             const SizedBox(height: 20),
@@ -54,7 +72,7 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                   const SizedBox(height: 10),
                   
-                  // Price Logic (Handles Sale Display)
+                  // Price Logic
                   if (isOnSale)
                     Row(
                       children: [
@@ -72,17 +90,44 @@ class _ProductPageState extends State<ProductPage> {
                   else
                     Text(
                       '£${product.price.toStringAsFixed(2)}',
-                      style: const TextStyle(fontSize: 22, color: Colors.indigo),
+                      style: const TextStyle(fontSize: 22, color: Colors.indigo, fontWeight: FontWeight.bold),
                     ),
                     
                   const SizedBox(height: 20),
+                  
+                  // 2. VARIANT SELECTOR (Only if variants exist)
+                  if (hasVariants) ...[
+                    Text('Select Option: $_selectedVariant', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 10,
+                      children: product.variants!.entries.map((entry) {
+                        final bool isSelected = _selectedVariant == entry.key;
+                        return ChoiceChip(
+                          label: Text(entry.key),
+                          selected: isSelected,
+                          selectedColor: Colors.indigo.withOpacity(0.2),
+                          onSelected: (bool selected) {
+                            if (selected) {
+                              setState(() {
+                                _selectedVariant = entry.key;
+                                _currentImage = entry.value; // Update the main image!
+                              });
+                            }
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+
                   Text(
                     product.description,
-                    style: const TextStyle(fontSize: 16, height: 1.5),
+                    style: const TextStyle(fontSize: 16, height: 1.5, color: Colors.black87),
                   ),
                   const SizedBox(height: 30),
                   
-                  // Quantity Selector (Simple implementation)
+                  // Quantity Selector
                   const Text('Quantity', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
@@ -107,28 +152,39 @@ class _ProductPageState extends State<ProductPage> {
 
                   const SizedBox(height: 30),
 
-                  // Add to Cart Button (Uses ViewModel Action)
+                  // Add to Cart Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.indigo,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
                       ),
                       onPressed: () {
-                         // Add item(s) using the ViewModel
+                         // Create a specific instance for the cart
+                         // If it has variants, we modify the title to include the variant (e.g. "Hoodie - Grey")
+                         final cartProduct = Product(
+                           id: product.id + (_selectedVariant ?? ''), // Unique ID for cart
+                           title: hasVariants ? '${product.title} - $_selectedVariant' : product.title,
+                           price: product.price,
+                           image: _currentImage, // Use the selected image
+                           description: product.description,
+                           collectionId: product.collectionId,
+                           oldPrice: product.oldPrice
+                         );
+
                          for (int i = 0; i < _quantity; i++) {
-                           cartVM.add(product);
+                           cartVM.add(cartProduct);
                          }
                          
                          ScaffoldMessenger.of(context).showSnackBar(
                            SnackBar(content: Text('${product.title} added (x$_quantity)!'))
                          );
                          
-                         // Automatically navigate to cart, forcing visual update
                          Navigator.pushNamed(context, '/cart');
                       },
-                      child: const Text('Add to Cart', style: TextStyle(color: Colors.white, fontSize: 18)),
+                      child: const Text('ADD TO CART', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                     ),
                   ),
                 ],
