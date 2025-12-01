@@ -34,10 +34,10 @@ final List<Product> _allProducts = [
   // 6. SIGNATURE RANGE (Clothing) - 2 Colours
   Product(
     id: 'p_signature',
-    title: 'Signature Hoodie',
+    title: 'Signature T-Shirt',
     price: 35.00,
     image: 'assets/images/signature_blue.webp',
-    description: 'Premium heavyweight hoodie from our Signature collection.',
+    description: 'Premium heavyweight t-shirt from our Signature collection.',
     collectionId: 'c_clothing',
     variants: {
       'Blue': 'assets/images/signature_blue.webp',
@@ -48,10 +48,10 @@ final List<Product> _allProducts = [
   // 5. HALLOWEEN (Halloween) - 2 Styles
   Product(
     id: 'p_halloween',
-    title: 'Spooky Tee',
+    title: 'Spooky Tote Bag',
     price: 15.00,
     image: 'assets/images/halloween_ghost.webp',
-    description: 'Limited edition Halloween tees. Choose your spook!',
+    description: 'Limited edition Halloween tote bag. Choose your spook!',
     collectionId: 'c_halloween',
     variants: {
       'Ghost Style': 'assets/images/halloween_ghost.webp',
@@ -62,10 +62,10 @@ final List<Product> _allProducts = [
   // 1. GRADUATION (Graduation) - Dummy Products for each image
   Product(
     id: 'p_grad_1',
-    title: 'Graduation Bear',
+    title: 'Graduation Pin',
     price: 15.00,
     image: 'assets/images/graduation_p1.webp',
-    description: 'Cute graduation bear with gown.',
+    description: 'Signature graduation pin for your big day.',
     collectionId: 'c_grad',
   ),
   Product(
@@ -80,18 +80,18 @@ final List<Product> _allProducts = [
   // 2. MERCHANDISE (Merchandise) - Dummy Products for each image
   Product(
     id: 'p_merch_1',
-    title: 'Union Mug',
+    title: 'Lanyard',
     price: 8.00,
     image: 'assets/images/merchendise_p1.webp',
-    description: 'Ceramic mug with Union logo.',
+    description: 'University branded lanyard.',
     collectionId: 'c_merch',
   ),
   Product(
     id: 'p_merch_2',
-    title: 'Notebook A5',
+    title: 'Uni Pen',
     price: 5.00,
     image: 'assets/images/merchendise_p2.webp',
-    description: 'Lined notebook for lectures.',
+    description: 'Branded Pen',
     collectionId: 'c_merch',
   ),
   Product(
@@ -104,18 +104,18 @@ final List<Product> _allProducts = [
   ),
   Product(
     id: 'p_merch_4',
-    title: 'Tote Bag',
+    title: 'Notebook',
     price: 4.00,
     image: 'assets/images/merchendise_p4.webp',
-    description: 'Cotton tote bag.',
+    description: 'Uni branded notebook',
     collectionId: 'c_merch',
   ),
   Product(
     id: 'p_merch_5',
-    title: 'Lanyard',
+    title: 'Tie',
     price: 3.00,
     image: 'assets/images/merchendise_p5.webp',
-    description: 'University branded lanyard.',
+    description: 'University branded tie',
     collectionId: 'c_merch',
   ),
   
