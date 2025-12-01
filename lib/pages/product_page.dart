@@ -15,19 +15,16 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  int _quantity = 1;
+  int _quantity = 1; 
   
-  // State for the currently selected image and variant name
   late String _currentImage;
   String? _selectedVariant;
 
   @override
   void initState() {
     super.initState();
-    // Default to the main product image
     _currentImage = widget.product.image;
     
-    // If variants exist, select the first one by default
     if (widget.product.variants != null && widget.product.variants!.isNotEmpty) {
       _selectedVariant = widget.product.variants!.keys.first;
       _currentImage = widget.product.variants![_selectedVariant]!;
@@ -46,14 +43,14 @@ class _ProductPageState extends State<ProductPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. PRODUCT IMAGE (Updates when variant changes)
+            // 1. PRODUCT IMAGE
             Container(
               height: 350,
               width: double.infinity,
               color: Colors.white,
               child: Image.asset(
-                _currentImage, // Use the state variable
-                fit: BoxFit.contain, // Changed to contain so we see the full shirt
+                _currentImage, 
+                fit: BoxFit.contain,
                 errorBuilder: (c,o,s) => const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey)),
               ),
             ),
@@ -95,7 +92,7 @@ class _ProductPageState extends State<ProductPage> {
                     
                   const SizedBox(height: 20),
                   
-                  // 2. VARIANT SELECTOR (Only if variants exist)
+                  // 2. VARIANT SELECTOR
                   if (hasVariants) ...[
                     Text('Select Option: $_selectedVariant', style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
@@ -162,14 +159,13 @@ class _ProductPageState extends State<ProductPage> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4))
                       ),
                       onPressed: () {
-                         // Create a specific instance for the cart
-                         // If it has variants, we modify the title to include the variant (e.g. "Hoodie - Grey")
+                         // Build the unique product instance for the cart
                          final cartProduct = Product(
-                           id: product.id + (_selectedVariant ?? ''), // Unique ID for cart
-                           title: hasVariants ? '${product.title} - $_selectedVariant' : product.title,
+                           id: product.id + (_selectedVariant ?? ''),
+                           title: hasVariants ? '${product.title}' : product.title, // Title remains clean
                            price: product.price,
-                           image: _currentImage, // Use the selected image
-                           description: product.description,
+                           image: _currentImage, 
+                           description: 'Variant: $_selectedVariant', // NEW: Save variant in description
                            collectionId: product.collectionId,
                            oldPrice: product.oldPrice
                          );
