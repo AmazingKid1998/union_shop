@@ -12,9 +12,20 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the ShopViewModel for data
     final shopVM = Provider.of<ShopViewModel>(context);
-    final products = shopVM.products;
+    final allProducts = shopVM.products;
+
+    // LOGIC: Get one product per unique collectionId
+    final List<Product> featuredProducts = [];
+    final Set<String> seenCollections = {};
+
+    for (var product in allProducts) {
+      // If we haven't seen this collection yet, add the product
+      if (!seenCollections.contains(product.collectionId)) {
+        seenCollections.add(product.collectionId);
+        featuredProducts.add(product);
+      }
+    }
 
     return Scaffold(
       appBar: const SiteHeader(),
@@ -29,13 +40,13 @@ class HomePage extends StatelessWidget {
             
             const SizedBox(height: 20),
             
-            // Display products using ViewModel data
+            // Display unique category products
             Wrap(
               spacing: 20,
               runSpacing: 20,
-              children: products.isEmpty 
+              children: featuredProducts.isEmpty 
                   ? [const Center(child: CircularProgressIndicator())]
-                  : products.take(4).map((product) {
+                  : featuredProducts.map((product) {
                     return _buildProductItem(context, product);
                   }).toList(),
             ),
@@ -49,7 +60,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // A helper to build a clickable product card
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
@@ -65,17 +75,15 @@ class HomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image
             Container(
               height: 150,
               width: double.infinity,
               color: Colors.grey[200],
-              child: Image.asset(product.image, fit: BoxFit.cover),
+              child: Image.asset(product.image, fit: BoxFit.cover, errorBuilder: (c,o,s) => const Icon(Icons.image)),
             ),
             const SizedBox(height: 10),
             Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
             
-            // Price Logic (handles sale)
             if (product.oldPrice != null)
               Row(
                 children: [
