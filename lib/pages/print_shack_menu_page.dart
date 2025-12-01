@@ -17,6 +17,7 @@ class PrintShackMenuPage extends StatelessWidget {
               child: Text(
                 'The Print Shack',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
+                textAlign: TextAlign.center,
               ),
             ),
             
@@ -59,7 +60,8 @@ class PrintShackMenuPage extends StatelessWidget {
       onTap: () => Navigator.pushNamed(context, route),
       child: Container(
         width: 300,
-        height: 200,
+        // Removed fixed height: 200
+        constraints: const BoxConstraints(minHeight: 200), // Minimum height instead
         padding: const EdgeInsets.all(30),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -72,7 +74,7 @@ class PrintShackMenuPage extends StatelessWidget {
           children: [
             Icon(icon, size: 40, color: const Color(0xFF4B0082)),
             const SizedBox(height: 20),
-            Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            Text(title, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
             const SizedBox(height: 10),
             Text(subtitle, textAlign: TextAlign.center, style: const TextStyle(color: Colors.grey)),
           ],
