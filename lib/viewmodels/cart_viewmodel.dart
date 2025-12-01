@@ -5,30 +5,42 @@ import '../repositories/cart_repository.dart';
 class CartViewModel extends ChangeNotifier {
   final CartRepository _cartRepository = CartRepository();
 
-  // Expose items
-  List<Product> get items => _cartRepository.getCartItems();
+  // Expose unique items for display purposes
+  List<Product> get uniqueProducts => _cartRepository.getCartItems().toSet().toList();
+  
+  // Expose the raw list (needed for total price calculation)
+  List<Product> get rawItems => _cartRepository.getCartItems();
 
-  // Expose Total Price
   double get totalPrice {
-    return items.fold(0, (total, current) => total + current.price);
+    return rawItems.fold(0, (total, current) => total + current.price);
   }
   
-  // Expose Count
-  int get count => items.length;
+  // FIX 2: EXPOSE getQuantity method
+  int getQuantity(Product product) {
+    return _cartRepository.getQuantity(product);
+  }
 
   // Actions
   void add(Product product) {
     _cartRepository.addItem(product);
-    notifyListeners(); // Tells UI to rebuild
-  }
-
-  void removeAt(int index) {
-    _cartRepository.removeAt(index);
     notifyListeners();
   }
-  
-  void removeProduct(Product product) {
-    _cartRepository.removeProduct(product);
+
+  // FIX 1: EXPOSE updateQuantity method
+  void updateQuantity(Product product, int newQuantity) {
+    // 1. Remove all current copies of this product by ID
+    _cartRepository.removeAllById(product.id);
+
+    // 2. Add the new required quantity
+    for (int i = 0; i < newQuantity; i++) {
+        _cartRepository.addItem(product);
+    }
+    notifyListeners();
+  }
+
+  // FIX 3: EXPOSE removeAllById method
+  void removeAllById(String productId) {
+    _cartRepository.removeAllById(productId);
     notifyListeners();
   }
   
