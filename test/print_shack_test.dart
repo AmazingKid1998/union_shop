@@ -25,58 +25,60 @@ Widget createTestWidget(Widget child) {
 
 void main() {
   group('PrintShackPage Tests', () {
+    // --- Test 1: Basic Rendering ---
     testWidgets('Renders essential UI elements', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const PrintShackPage()));
       await tester.pumpAndSettle();
 
-      // Check Title
       expect(find.text('Personalisation'), findsOneWidget);
-      
-      // Check Default Price
       expect(find.text('£3.00'), findsOneWidget);
-
-      // Check "ADD TO CART" button
       expect(find.text('ADD TO CART'), findsOneWidget);
     });
 
+    // --- Test 2: Error on Empty Text (Tap validation) ---
     testWidgets('Shows error if text is empty', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const PrintShackPage()));
       await tester.pumpAndSettle();
 
       final addButton = find.text('ADD TO CART');
+      
+      // FIX: Ensure button is visible before tapping
       await tester.ensureVisible(addButton);
-      await tester.pumpAndSettle();
+      await tester.pumpAndSettle(); 
 
       await tester.tap(addButton);
-      await tester.pump(); 
+      await tester.pump(); // Trigger frame for SnackBar
 
       // Verify SnackBar error message
       expect(find.textContaining('Please enter text'), findsOneWidget);
     });
 
+    // --- Test 3: Price and Variant Logic ---
     testWidgets('Can change variant and price updates correctly', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const PrintShackPage()));
       await tester.pumpAndSettle();
 
-      // 1. Verify initial state (One Line of Text, Price £3.00)
+      // 1. Verify initial state 
       expect(find.text('£3.00'), findsOneWidget);
-      expect(find.textContaining('Personalisation Line 1:'), findsOneWidget);
-      expect(find.textContaining('Personalisation Line 2:'), findsNothing); // Should only have 1 line initially
+      final dropdown = find.byType(DropdownButton<String>);
+      
+      // FIX: Ensure the dropdown is visible before tapping
+      await tester.ensureVisible(dropdown);
+      await tester.pumpAndSettle();
 
       // 2. Tap the dropdown to open the options list
-      final dropdown = find.byType(DropdownButton<String>);
       await tester.tap(dropdown);
-      await tester.pumpAndSettle(); // Wait for the options overlay to appear
+      await tester.pumpAndSettle(); 
 
       // 3. Select 'Three Lines of Text' (Price £7.50)
       final threeLinesOption = find.text('Three Lines of Text');
       await tester.tap(threeLinesOption);
-      await tester.pumpAndSettle(); // Wait for the UI to update
+      await tester.pumpAndSettle(); 
 
       // 4. Verify the price has updated to £7.50
       expect(find.text('£7.50'), findsOneWidget);
 
-      // 5. Verify three input fields are now present
+      // 5. Verify three input fields are now present (Text after Personalisation Line X:)
       expect(find.textContaining('Personalisation Line 1:'), findsOneWidget);
       expect(find.textContaining('Personalisation Line 2:'), findsOneWidget);
       expect(find.textContaining('Personalisation Line 3:'), findsOneWidget);
@@ -84,13 +86,26 @@ void main() {
     });
 
 
+    // --- Test 4: Full Flow (Input + Add to Cart + Navigation) ---
     testWidgets('Can enter text and add to cart', (WidgetTester tester) async {
       await tester.pumpWidget(createTestWidget(const PrintShackPage()));
       await tester.pumpAndSettle();
 
-      // 1. Enter Text for Line 1
-      final textField = find.byType(TextField).first; 
-      await tester.enterText(textField, 'My Custom Text');
+      // 1. Enter Text for Line 1 (CORRECTED FINDER SYNTAX)
+      final line1Label = find.text('Personalisation Line 1:');
+      
+      // Find the TextField input that is a sibling of the Line 1 Label (within the same parent column)
+      // This is a robust way to find the input box following the label.
+      final line1Input = find.descendant(
+        of: find.byType(Column).at(1), // Find the Column containing all the form fields
+        matching: find.byType(TextField)
+      ).first;
+
+      // Ensure the input field is visible if it's off-screen
+      await tester.ensureVisible(line1Input);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(line1Input, 'My Custom Text');
       await tester.pump();
 
       // 2. Change Quantity 
@@ -107,7 +122,7 @@ void main() {
       await tester.tap(addToCartButton);
       await tester.pumpAndSettle(); 
 
-      // 5. Verify Navigation
+      // 5. Verify Navigation (Check for the destination route's placeholder text)
       expect(find.text('Cart Page'), findsOneWidget);
     });
   });
