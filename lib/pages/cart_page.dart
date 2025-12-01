@@ -19,7 +19,8 @@ class _CartPageState extends State<CartPage> {
     // Access the Cart ViewModel (View is reading from ViewModel)
     return Consumer<CartViewModel>(
       builder: (context, cartVM, child) {
-        final uniqueProducts = cartVM.uniqueItems;
+        // FIX: Using uniqueProducts getter, which is correctly defined in the ViewModel.
+        final uniqueProducts = cartVM.uniqueProducts; 
 
         return Scaffold(
           appBar: const SiteHeader(),
