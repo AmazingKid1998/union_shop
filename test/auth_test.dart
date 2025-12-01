@@ -7,12 +7,13 @@ void main() {
 
     // NOTE: This setup runs before every single test
     setUpAll(() async {
+      // FIX: Initialize Flutter binding required for asset loading (rootBundle) in tests.
+      TestWidgetsFlutterBinding.ensureInitialized(); 
+      
       // 1. Initialize the service instance (Singleton pattern)
       authService = AuthService();
       
       // 2. Await loading the dummy JSON asset file
-      // NOTE: In the test environment, asset loading is synchronous 
-      // but we still call loadUsers() for completeness.
       await authService.loadUsers(); 
     });
 
@@ -38,7 +39,7 @@ void main() {
 
     // --- TEST 3: SUCCESSFUL SIGNUP ---
     test('Successfully sign up a new user', () {
-      const newEmail = 'test_new@example.com';
+      const newEmail = 'test_new_user@example.com';
       
       // Check that the user does not exist initially
       expect(authService.login(newEmail, 'newpass'), isFalse); 
@@ -58,6 +59,7 @@ void main() {
       const existingEmail = 'student@port.ac.uk';
       
       // Attempt to sign up the existing user again
+      // We also verify that the list size doesn't increase if signup fails
       final result = authService.signup(existingEmail, 'newpassword', 'Duplicate User');
       
       // Verify signup failed
