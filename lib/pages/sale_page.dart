@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/dummy_data.dart';
+import 'package:provider/provider.dart';
+import '../viewmodels/shop_viewmodel.dart';
 import '../models/product.dart';
 import 'product_page.dart';
 import '../widgets/site_header.dart';
@@ -10,7 +11,9 @@ class SalePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final saleProducts = getSaleProducts();
+    // MVVM: Access the ShopViewModel to get sale items
+    final shopVM = Provider.of<ShopViewModel>(context);
+    final saleProducts = shopVM.getSaleItems();
 
     return Scaffold(
       appBar: const SiteHeader(),
@@ -102,7 +105,7 @@ class SalePage extends StatelessWidget {
             child: Container(
               width: double.infinity,
               color: Colors.white, 
-              child: Image.asset(product.image, fit: BoxFit.cover),
+              child: Image.asset(product.image, fit: BoxFit.cover, errorBuilder: (c,o,s) => const Icon(Icons.image_not_supported, color: Colors.grey)),
             ),
           ),
           const SizedBox(height: 12),
