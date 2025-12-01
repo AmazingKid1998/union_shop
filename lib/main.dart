@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // REQUIRED FOR MVVM ARCHITECTURE
+
+// MVVM Imports
+import 'viewmodels/shop_viewmodel.dart';
+import 'viewmodels/cart_viewmodel.dart';
+
+// View Imports
 import 'pages/home_page.dart';
 import 'pages/about_page.dart';
 import 'pages/collections_page.dart';
@@ -8,7 +15,18 @@ import 'pages/login_page.dart';
 import 'pages/sale_page.dart';
 
 void main() {
-  runApp(const UnionShopApp());
+  runApp(
+    // Inject ViewModels here
+    MultiProvider(
+      providers: [
+        // Shop data and filtering logic
+        ChangeNotifierProvider(create: (_) => ShopViewModel()),
+        // Cart state management logic
+        ChangeNotifierProvider(create: (_) => CartViewModel()),
+      ],
+      child: const UnionShopApp(),
+    ),
+  );
 }
 
 class UnionShopApp extends StatelessWidget {
