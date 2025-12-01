@@ -1,86 +1,146 @@
 import '../models/product.dart';
 
-class ProductRepository {
-  // 1. Internal Cache
-  final List<Product> _products = [
-    // PASTE YOUR FULL LIST OF DUMMY PRODUCTS HERE (from dummy_data.dart)
-    // I am abbreviating for brevity, but you should copy the whole list.
-    Product(
-    id: 'p1',
-    title: 'Classic Hoodies',
-    price: 25.00, 
-    oldPrice: 35.00, // <--- ON SALE!
-    image: 'assets/images/p1.jpeg',
-    description: 'Our best selling Classic Hoodie comes in great colours!',
+// --- FULL DATASET BASED ON YOUR IMAGES ---
+final List<Product> _allProducts = [
+  // 3. CLASSIC HOODIE (Clothing) - 3 Colours
+  Product(
+    id: 'p_classic_hoodie',
+    title: 'Classic Hoodie',
+    price: 25.00,
+    image: 'assets/images/classichoodie_grey.webp', // Default
+    description: 'Our best selling Classic Hoodie comes in 3 great colours! 100% Cotton.',
     collectionId: 'c_clothing',
+    variants: {
+      'Grey': 'assets/images/classichoodie_grey.webp',
+      'Navy': 'assets/images/classichoodie_navy.webp',
+      'Purple': 'assets/images/classichoodie_purple.webp',
+    },
+  ),
+
+  // 4. ESSENTIAL T-SHIRT (Clothing) - 2 Colours
+  Product(
+    id: 'p_essential_tee',
+    title: 'Essential T-Shirt',
+    price: 12.00,
+    image: 'assets/images/essential_blue.webp', // Default
+    description: 'A wardrobe staple. Available in Blue and Green.',
+    collectionId: 'c_clothing',
+    variants: {
+      'Blue': 'assets/images/essential_blue.webp',
+      'Green': 'assets/images/essential_green.webp',
+    },
+  ),
+
+  // 6. SIGNATURE RANGE (Clothing) - 2 Colours
+  Product(
+    id: 'p_signature',
+    title: 'Signature Hoodie',
+    price: 35.00,
+    image: 'assets/images/signature_blue.webp',
+    description: 'Premium heavyweight hoodie from our Signature collection.',
+    collectionId: 'c_clothing',
+    variants: {
+      'Blue': 'assets/images/signature_blue.webp',
+      'Sand': 'assets/images/signature_sand.webp',
+    },
+  ),
+
+  // 5. HALLOWEEN (Halloween) - 2 Styles
+  Product(
+    id: 'p_halloween',
+    title: 'Spooky Tee',
+    price: 15.00,
+    image: 'assets/images/halloween_ghost.webp',
+    description: 'Limited edition Halloween tees. Choose your spook!',
+    collectionId: 'c_halloween',
+    variants: {
+      'Ghost Style': 'assets/images/halloween_ghost.webp',
+      'Boo Style': 'assets/images/halloween_boo.webp',
+    },
+  ),
+
+  // 1. GRADUATION (Graduation) - Dummy Products for each image
+  Product(
+    id: 'p_grad_1',
+    title: 'Graduation Bear',
+    price: 15.00,
+    image: 'assets/images/graduation_p1.webp',
+    description: 'Cute graduation bear with gown.',
+    collectionId: 'c_grad',
   ),
   Product(
-    id: 'p2',
-    title: 'Classic Sweatshirts',
-    price: 23.00,
-    // No oldPrice -> Not on sale
-    image: 'assets/images/p2.jpeg',
-    description: 'A comfortable classic sweatshirt perfect for everyday wear.',
-    collectionId: 'c_clothing',
+    id: 'p_grad_2',
+    title: 'Graduation Hoodie 2025',
+    price: 35.00,
+    image: 'assets/images/graduation_p2.webp',
+    description: 'Official Class of 2025 Hoodie.',
+    collectionId: 'c_grad',
+  ),
+
+  // 2. MERCHANDISE (Merchandise) - Dummy Products for each image
+  Product(
+    id: 'p_merch_1',
+    title: 'Union Mug',
+    price: 8.00,
+    image: 'assets/images/merchendise_p1.webp',
+    description: 'Ceramic mug with Union logo.',
+    collectionId: 'c_merch',
   ),
   Product(
-    id: 'p3',
-    title: 'Classic T-Shirts',
-    price: 11.00,
-    oldPrice: 15.00, // <--- ON SALE!
-    image: 'assets/images/p1.jpeg',
-    description: 'Soft cotton T-shirt featuring the Union logo.',
-    collectionId: 'c_clothing',
+    id: 'p_merch_2',
+    title: 'Notebook A5',
+    price: 5.00,
+    image: 'assets/images/merchendise_p2.webp',
+    description: 'Lined notebook for lectures.',
+    collectionId: 'c_merch',
   ),
-  // ... (Keep the rest of your products the same, just copy them back in)
-  // For brevity, I am showing the first 3. You should keep your full list of 18 items.
-  // Just ensure you add the 'oldPrice: null,' or leave it out for non-sale items.
+  Product(
+    id: 'p_merch_3',
+    title: 'Metal Water Bottle',
+    price: 12.00,
+    image: 'assets/images/merchendise_p3.webp',
+    description: 'Keep your drinks cool.',
+    collectionId: 'c_merch',
+  ),
+  Product(
+    id: 'p_merch_4',
+    title: 'Tote Bag',
+    price: 4.00,
+    image: 'assets/images/merchendise_p4.webp',
+    description: 'Cotton tote bag.',
+    collectionId: 'c_merch',
+  ),
+  Product(
+    id: 'p_merch_5',
+    title: 'Lanyard',
+    price: 3.00,
+    image: 'assets/images/merchendise_p5.webp',
+    description: 'University branded lanyard.',
+    collectionId: 'c_merch',
+  ),
   
-  // Example of another sale item
-  Product(
-    id: 'p6',
-    title: 'Limited Edition Zip Hoodie',
-    price: 20.00,
-    oldPrice: 30.00, // <--- ON SALE!
-    image: 'assets/images/p1.jpeg',
-    description: 'Limited run essential zip hoodie.',
-    collectionId: 'c_clothing',
-  ),
-  
-  // ... (Paste the rest of your products here) ...
+  // CATEGORY PLACEHOLDERS (Keep these for the Shop Page grid images if needed)
+  Product(id: 'cat_clothing', title: 'Clothing Cat', price: 0, image: 'assets/images/clothing_cat.jpg', description: '', collectionId: 'hidden'),
+  Product(id: 'cat_merch', title: 'Merch Cat', price: 0, image: 'assets/images/merch_cat.jpg', description: '', collectionId: 'hidden'),
 ];
-    // ... add the rest ...
 
-  // 2. Methods to access data (As requested by professor)
-  
-  // Get all products
+class ProductRepository {
   Future<List<Product>> getAllProducts() async {
-    // Simulate network delay if you want, or just return
-    return _products;
+    return _allProducts;
   }
 
-  // Get by ID
   Product getProductById(String id) {
-    return _products.firstWhere((p) => p.id == id);
+    return _allProducts.firstWhere((p) => p.id == id, orElse: () => _allProducts.first);
   }
 
-  // Get by Collection
   List<Product> getProductsByCollection(String collectionId) {
     if (collectionId == 'c_clothing') {
-       return _products.where((p) => 
-         p.collectionId == 'c_clothing' || p.title.contains('Graduation Hoodie')
-       ).toList();
+       return _allProducts.where((p) => p.collectionId == 'c_clothing').toList();
     }
-    if (collectionId == 'c_merch') {
-       return _products.where((p) => 
-         p.collectionId == 'c_merch' || p.collectionId == 'c_city'
-       ).toList();
-    }
-    return _products.where((p) => p.collectionId == collectionId).toList();
+    return _allProducts.where((p) => p.collectionId == collectionId).toList();
   }
   
-  // Get Sale Products
   List<Product> getSaleProducts() {
-    return _products.where((p) => p.oldPrice != null).toList();
+    return _allProducts.where((p) => p.oldPrice != null).toList();
   }
 }
