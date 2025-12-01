@@ -28,14 +28,26 @@ class CollectionsPage extends StatelessWidget {
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
                 children: [
-                  // Make sure these filenames match what is in your assets/images folder!
+                  // 1. Clothing (Existing)
                   _buildCategoryCard(context, 'Clothing', 'c_clothing', 'assets/images/clothing_cat.jpg'),
+                  
+                  // 2. Merchandise (Existing)
                   _buildCategoryCard(context, 'Merchandise', 'c_merch', 'assets/images/merch_cat.jpg'),
+                  
+                  // 3. Halloween (NEW ASSET)
                   _buildCategoryCard(context, 'Halloween 🎃', 'c_halloween', 'assets/images/halloween_cat.jpg'),
-                  _buildCategoryCard(context, 'Signature Range', 'c_signature', 'assets/images/signature_cat.jpg'),
-                  _buildCategoryCard(context, 'Portsmouth City', 'c_city', 'assets/images/city_cat.jpg'),
+                  
+                  // 4. Signature Range (Reusing clothing or generic for now unless you have one)
+                  _buildCategoryCard(context, 'Signature Range', 'c_signature', 'assets/images/clothing_cat.jpg'), 
+                  
+                  // 5. Portsmouth City (NEW ASSET)
+                  _buildCategoryCard(context, 'Portsmouth City', 'c_city', 'assets/images/portsmouth_cat.jpg'),
+                  
+                  // 6. Pride (NEW ASSET)
                   _buildCategoryCard(context, 'Pride 🏳️‍🌈', 'c_pride', 'assets/images/pride_cat.jpg'),
-                  _buildCategoryCard(context, 'Graduation 🎓', 'c_grad', 'assets/images/grad_cat.jpg'),
+                  
+                  // 7. Graduation (NEW ASSET)
+                  _buildCategoryCard(context, 'Graduation 🎓', 'c_grad', 'assets/images/graduation_cat.jpg'),
                 ],
               ),
             ),
