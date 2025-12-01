@@ -7,7 +7,8 @@ final List<Product> _allProducts = [
     id: 'p_classic_hoodie',
     title: 'Classic Hoodie',
     price: 25.00,
-    image: 'assets/images/classichoodie_grey.webp', // Default
+    oldPrice: 35.00, // ON SALE
+    image: 'assets/images/classichoodie_grey.webp', 
     description: 'Our best selling Classic Hoodie comes in 3 great colours! 100% Cotton.',
     collectionId: 'c_clothing',
     variants: {
@@ -22,7 +23,8 @@ final List<Product> _allProducts = [
     id: 'p_essential_tee',
     title: 'Essential T-Shirt',
     price: 12.00,
-    image: 'assets/images/essential_blue.webp', // Default
+    // Not on sale
+    image: 'assets/images/essential_blue.webp', 
     description: 'A wardrobe staple. Available in Blue and Green.',
     collectionId: 'c_clothing',
     variants: {
@@ -59,7 +61,7 @@ final List<Product> _allProducts = [
     },
   ),
 
-  // 1. GRADUATION (Graduation) - Dummy Products for each image
+  // 1. GRADUATION (Graduation)
   Product(
     id: 'p_grad_1',
     title: 'Graduation Pin',
@@ -77,11 +79,13 @@ final List<Product> _allProducts = [
     collectionId: 'c_grad',
   ),
 
-  // 2. MERCHANDISE (Merchandise) - Dummy Products for each image
+  // 2. MERCHANDISE (Merchandise)
+  // Let's put TWO items on sale as requested
   Product(
     id: 'p_merch_1',
     title: 'Lanyard',
-    price: 8.00,
+    price: 5.00,     // Sale Price
+    oldPrice: 8.00,  // Original Price -> ON SALE
     image: 'assets/images/merchendise_p1.webp',
     description: 'University branded lanyard.',
     collectionId: 'c_merch',
@@ -89,7 +93,8 @@ final List<Product> _allProducts = [
   Product(
     id: 'p_merch_2',
     title: 'Uni Pen',
-    price: 5.00,
+    price: 3.00,     // Sale Price
+    oldPrice: 5.00,  // Original Price -> ON SALE
     image: 'assets/images/merchendise_p2.webp',
     description: 'Branded Pen',
     collectionId: 'c_merch',
@@ -119,7 +124,7 @@ final List<Product> _allProducts = [
     collectionId: 'c_merch',
   ),
   
-  // CATEGORY PLACEHOLDERS (Keep these for the Shop Page grid images if needed)
+  // CATEGORY PLACEHOLDERS
   Product(id: 'cat_clothing', title: 'Clothing Cat', price: 0, image: 'assets/images/clothing_cat.jpg', description: '', collectionId: 'hidden'),
   Product(id: 'cat_merch', title: 'Merch Cat', price: 0, image: 'assets/images/merch_cat.jpg', description: '', collectionId: 'hidden'),
 ];
@@ -140,6 +145,7 @@ class ProductRepository {
     return _allProducts.where((p) => p.collectionId == collectionId).toList();
   }
   
+  // This method grabs ALL products with an oldPrice, regardless of category
   List<Product> getSaleProducts() {
     return _allProducts.where((p) => p.oldPrice != null).toList();
   }
