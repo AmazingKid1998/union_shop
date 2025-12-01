@@ -1,29 +1,28 @@
 import '../models/product.dart';
 
 class CartRepository {
-  // Internal Cache
+  // Internal Cache (The actual list holding cart items)
   final List<Product> _cartItems = [];
 
-  // Get Items
   List<Product> getCartItems() {
     return _cartItems;
   }
 
-  // Add Item
   void addItem(Product product) {
     _cartItems.add(product);
   }
 
-  // Remove Item (All copies or single copy logic can go here)
-  void removeProduct(Product product) {
-    _cartItems.remove(product);
+  // FIX: Ensure this method signature matches the call in the ViewModel
+  void removeAllById(String productId) {
+    _cartItems.removeWhere((p) => p.id == productId);
   }
   
-  void removeAt(int index) {
-    _cartItems.removeAt(index);
-  }
-
   void clear() {
     _cartItems.clear();
+  }
+  
+  // FIX: Ensure this method signature matches the call in the ViewModel
+  int getQuantity(Product product) {
+    return _cartItems.where((p) => p.id == product.id).length;
   }
 }
