@@ -269,9 +269,9 @@ DA:105,1
 DA:108,4
 DA:109,2
 DA:110,1
-DA:111,0
-DA:113,0
-DA:114,0
+DA:111,1
+DA:113,2
+DA:114,1
 DA:125,3
 DA:126,1
 DA:128,1
@@ -305,7 +305,7 @@ DA:182,1
 DA:186,1
 DA:189,2
 LF:72
-LH:69
+LH:72
 end_of_record
 SF:lib\pages\print_shack_menu_page.dart
 DA:6,1
