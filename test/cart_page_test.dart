@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:union_shop/models/product.dart';
-import 'package:union_shop/pages/cart_page.dart'; // Ensure CartItemRow is accessible
+import 'package:union_shop/pages/cart_page.dart';
 import 'package:union_shop/viewmodels/cart_viewmodel.dart';
 
 void main() {
   
-  // 1. SETUP DUMMY DATA
   final productA = Product(
     id: 'p1', title: 'Basic Tee', price: 10.00, 
     image: 'img.jpg', description: 'Variant: Red', collectionId: 'col'
@@ -55,18 +54,18 @@ void main() {
   group('CartPage Interaction Tests', () {
     testWidgets('Edit mode allows updating quantity', (WidgetTester tester) async {
       final cart = CartViewModel();
-      cart.add(productA); // Start with 1
+      cart.add(productA); 
 
       await tester.pumpWidget(createCartTest(cartVM: cart));
 
       // 1. Click EDIT
       final editBtn = find.text('EDIT');
       await tester.tap(editBtn);
-      await tester.pump(); // Rebuild for Edit Mode
+      await tester.pump(); 
 
       // 2. Verify Input Field appears
-      // FIX: Be specific! Find the TextField inside the CartItemRow only.
-      // This ignores the Email TextField in the footer.
+      // --- THE FIX ---
+      // We explicitly look for the TextField inside the Row, ignoring the Footer.
       final qtyInput = find.descendant(
         of: find.byType(CartItemRow), 
         matching: find.byType(TextField)
@@ -74,7 +73,7 @@ void main() {
       
       expect(qtyInput, findsOneWidget);
 
-      // 3. Change Quantity to 5
+      // 3. Change Quantity
       await tester.enterText(qtyInput, '5');
       await tester.pump();
 
@@ -82,8 +81,8 @@ void main() {
       await tester.tap(find.text('UPDATE'));
       await tester.pump(); 
 
-      // 5. Verify ViewModel updated
-      expect(cart.totalPrice, 50.00); // 5 * 10
+      // 5. Verify
+      expect(cart.totalPrice, 50.00); 
       expect(find.text('Basic Tee (x5)'), findsOneWidget);
     });
 
@@ -93,15 +92,11 @@ void main() {
 
       await tester.pumpWidget(createCartTest(cartVM: cart));
 
-      // 1. Scroll to Checkout
       final checkoutBtn = find.text('Check out');
       await tester.ensureVisible(checkoutBtn);
-      
-      // 2. Click it
       await tester.tap(checkoutBtn);
       await tester.pump(); 
 
-      // 3. Verify Cart Cleared
       expect(find.text('Your basket is empty.'), findsOneWidget);
       expect(cart.rawItems.isEmpty, true);
     });
