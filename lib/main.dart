@@ -20,6 +20,7 @@ import 'pages/print_shack_about_page.dart';
 import 'pages/cart_page.dart';
 import 'pages/login_page.dart';
 import 'pages/sale_page.dart';
+import 'pages/signup_page.dart'; // Added missing import
 
 void main() {
   runApp(
@@ -47,12 +48,9 @@ class UnionShopApp extends StatelessWidget {
       ),
       initialRoute: '/',
       
-      // Replaces 'routes' with dynamic generation logic
       onGenerateRoute: (settings) {
-        // 1. Extract arguments (if any)
         final args = settings.arguments;
 
-        // 2. Switch statement to return the correct page
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (_) => const HomePage());
@@ -72,7 +70,6 @@ class UnionShopApp extends StatelessWidget {
           case '/sale':
             return MaterialPageRoute(builder: (_) => const SalePage());
 
-          // Print Shack Routes
           case '/print-shack':
             return MaterialPageRoute(builder: (_) => const PrintShackMenuPage());
           case '/print-shack/tool':
@@ -80,10 +77,9 @@ class UnionShopApp extends StatelessWidget {
           case '/print-shack/about':
             return MaterialPageRoute(builder: (_) => const PrintShackAboutPage());
 
-          // --- DYNAMIC ROUTES (WITH ARGUMENTS) ---
+          // --- DYNAMIC ROUTES (FIXED) ---
 
           case '/product':
-            // Validation: Ensure args is a Product object
             if (args is Product) {
               return MaterialPageRoute(
                 builder: (_) => ProductPage(product: args),
@@ -92,12 +88,13 @@ class UnionShopApp extends StatelessWidget {
             return _errorRoute();
 
           case '/collection':
-            // Validation: Ensure args is a Map with id and title
-            if (args is Map<String, String>) {
+            // FIX: Check for generic 'Map' instead of 'Map<String, String>'
+            // This prevents type errors if the map is inferred as <dynamic, dynamic>
+            if (args is Map) {
               return MaterialPageRoute(
                 builder: (_) => CollectionDetailPage(
-                  collectionId: args['id']!,
-                  title: args['title']!,
+                  collectionId: args['id'].toString(), // Safely convert to String
+                  title: args['title'].toString(),
                 ),
               );
             }
@@ -110,7 +107,6 @@ class UnionShopApp extends StatelessWidget {
     );
   }
 
-  // Fallback for invalid routes/arguments
   Route<dynamic> _errorRoute() {
     return MaterialPageRoute(builder: (_) {
       return Scaffold(
