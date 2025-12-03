@@ -7,6 +7,8 @@ import 'viewmodels/cart_viewmodel.dart';
 
 // Models
 import 'models/product.dart';
+// REPO IMPORT (Crucial for looking up products by ID from the URL)
+import 'repositories/product_repository.dart'; 
 
 // Pages
 import 'pages/home_page.dart';
@@ -54,14 +56,13 @@ class UnionShopApp extends StatelessWidget {
           return MaterialPageRoute(builder: (_) => const HomePage());
         }
 
-        // 2. Parse the URI to handle paths like "/collection/c_halloween"
+        // 2. Parse the URI to handle deep links
         final uri = Uri.parse(settings.name ?? '');
         
         // --- ROUTE: COLLECTION DETAILS ---
         // Matches: /collection/c_clothing
         if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'collection') {
           final id = uri.pathSegments[1];
-          // Determine title based on ID
           final title = _getCollectionTitle(id); 
           
           return MaterialPageRoute(
@@ -69,20 +70,23 @@ class UnionShopApp extends StatelessWidget {
               collectionId: id,
               title: title,
             ),
-            settings: settings, // Important for browser history
+            settings: settings,
           );
         }
 
-        // --- ROUTE: PRODUCT DETAILS ---
-        // Matches: /product/p_classic_hoodie (Future implementation)
-        // For now, we still rely on arguments for internal product navigation
-        if (settings.name == '/product') {
-           final args = settings.arguments;
-           if (args is Product) {
-              return MaterialPageRoute(
-                builder: (_) => ProductPage(product: args),
-              );
-           }
+        // --- ROUTE: PRODUCT DETAILS (NEW) ---
+        // Matches: /product/p_classic_hoodie
+        if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'product') {
+          final id = uri.pathSegments[1];
+          
+          // Look up the product using the Repository based on the ID from URL
+          // (Since your dummy data is local/sync, this works immediately)
+          final product = ProductRepository().getProductById(id);
+          
+          return MaterialPageRoute(
+            builder: (_) => ProductPage(product: product),
+            settings: settings,
+          );
         }
 
         // --- STATIC ROUTES ---
@@ -110,7 +114,7 @@ class UnionShopApp extends StatelessWidget {
     );
   }
 
-  // Helper to map IDs to Titles (Needed because URL only contains the ID)
+  // Helper to map IDs to Titles
   String _getCollectionTitle(String id) {
     switch (id) {
       case 'c_clothing': return 'Clothing';
