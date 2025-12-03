@@ -166,7 +166,7 @@ class _ProductPageState extends State<ProductPage> {
                            price: product.price,
                            image: _currentImage, 
                            description: 'Variant: ${_selectedVariant ?? 'Default'}', // Save variant in description
-                           collectionId: product.collectionId,
+                           collectionIds: product.collectionIds, // UPDATED: Pass list
                            oldPrice: product.oldPrice
                          );
 
@@ -178,7 +178,7 @@ class _ProductPageState extends State<ProductPage> {
                            SnackBar(content: Text('${product.title} added (x$_quantity)!'))
                          );
                          
-                         // NAV CHANGE: Use Named Route
+                         // NAV CHANGE: Use Named Route for Cart
                          Navigator.pushNamed(context, '/cart');
                       },
                       child: const Text('ADD TO CART', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
