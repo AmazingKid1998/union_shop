@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // <--- ADDED THIS IMPORT
-import '../viewmodels/cart_viewmodel.dart'; // <--- ADDED THIS IMPORT
+import 'package:provider/provider.dart'; 
+import '../viewmodels/cart_viewmodel.dart'; 
 import 'mobile_nav_menu.dart'; 
-import 'desktop_nav_bar.dart'; // Import new desktop widget
+import 'desktop_nav_bar.dart'; 
+import 'product_search_delegate.dart'; // <--- ADD THIS IMPORT
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
-  // Define a constant breakpoint for responsiveness
   static const double desktopBreakpoint = 800;
 
   const SiteHeader({super.key});
@@ -14,11 +14,9 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // If the screen width is greater than the breakpoint, show the desktop view.
         if (constraints.maxWidth > desktopBreakpoint) {
           return const DesktopNavBarWrapper();
         } else {
-          // Otherwise, show the mobile view (which includes the purple banner and hamburger icon).
           return const MobileNavBarWrapper();
         }
       },
@@ -27,23 +25,17 @@ class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    // The total height of the header needs to be consistent.
-    // Mobile: Banner (~50px) + Navbar (60px) = 110px
-    // Desktop: Just Navbar (60px)
-    return const Size.fromHeight(kToolbarHeight + 50); // Defaulting to mobile height for consistency
+    return const Size.fromHeight(kToolbarHeight + 50); 
   }
 }
 
-// Helper wrapper for Mobile (includes the purple banner)
 class MobileNavBarWrapper extends StatelessWidget implements PreferredSizeWidget {
   const MobileNavBarWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Mobile view includes the purple banner and the mobile/hamburger nav row.
     return Column(
       children: [
-        // The Purple Banner
         Container(
           width: double.infinity,
           color: const Color(0xFF4B0082),
@@ -54,7 +46,6 @@ class MobileNavBarWrapper extends StatelessWidget implements PreferredSizeWidget
             textAlign: TextAlign.center,
           ),
         ),
-        // The Mobile/Hamburger Nav Bar (from the previous implementation)
         const MobileNavRow(),
       ],
     );
@@ -64,15 +55,13 @@ class MobileNavBarWrapper extends StatelessWidget implements PreferredSizeWidget
   Size get preferredSize => const Size.fromHeight(kToolbarHeight + 50);
 }
 
-// Extracted the Mobile Nav Row logic from the old SiteHeader
 class MobileNavRow extends StatelessWidget {
   const MobileNavRow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // We rebuild the Mobile header row logic here
     return Container(
-      height: kToolbarHeight, // Fixed height for the nav row
+      height: kToolbarHeight, 
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -82,7 +71,6 @@ class MobileNavRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Logo
           GestureDetector(
             onTap: () => Navigator.pushReplacementNamed(context, '/'),
             child: RichText(
@@ -97,13 +85,15 @@ class MobileNavRow extends StatelessWidget {
           
           const Spacer(),
 
-          // Icons
-          // ... (Icons logic remains the same, but extracted for clarity)
-          
-          // SEARCH ICON
+          // SEARCH ICON (FIXED)
           IconButton(
             icon: const Icon(Icons.search, size: 26, color: Colors.black87),
-            onPressed: () { /* Search logic */ }, 
+            onPressed: () { 
+              showSearch(
+                context: context, 
+                delegate: ProductSearchDelegate()
+              ); 
+            }, 
           ),
 
           // PROFILE ICON
@@ -112,7 +102,7 @@ class MobileNavRow extends StatelessWidget {
             onPressed: () { Navigator.pushNamed(context, '/login'); },
           ),
 
-          // CART ICON WITH BADGE (Consumer is now defined because provider is imported)
+          // CART ICON WITH BADGE
           Consumer<CartViewModel>(
             builder: (context, cartVM, child) {
               final cartCount = cartVM.rawItems.length;
@@ -138,7 +128,7 @@ class MobileNavRow extends StatelessWidget {
             }
           ),
 
-          // HAMBURGER MENU (Opens the slide-out menu)
+          // HAMBURGER MENU
           IconButton(
             icon: const Icon(Icons.menu, size: 30, color: Colors.black87),
             onPressed: () {
@@ -153,16 +143,14 @@ class MobileNavRow extends StatelessWidget {
   }
 }
 
-// Wrapper for Desktop (ensures we define PreferredSize)
 class DesktopNavBarWrapper extends StatelessWidget implements PreferredSizeWidget {
   const DesktopNavBarWrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Desktop view shows only the clean horizontal bar
     return const DesktopNavBar();
   }
   
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight); // Only the height of the nav bar itself
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight); 
 }
