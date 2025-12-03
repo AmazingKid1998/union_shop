@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/cart_viewmodel.dart';
-import 'product_search_delegate.dart';
+import 'product_search_delegate.dart'; // Ensure this import exists!
 
 class DesktopNavBar extends StatelessWidget {
   const DesktopNavBar({super.key});
 
-  // Helper to build the main navigation links
   Widget _buildNavLink(BuildContext context, String text, String route) {
     return TextButton(
       onPressed: () {
         if (text == 'The Print Shack') {
-          // Special case: Navigate to the Print Shack menu page
           Navigator.pushNamed(context, '/print-shack');
         } else {
           Navigator.pushNamed(context, route);
@@ -30,12 +28,11 @@ class DesktopNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access Cart VM only for the badge count
     final cartVM = Provider.of<CartViewModel>(context);
     final cartCount = cartVM.rawItems.length;
 
     return Container(
-      height: kToolbarHeight, // Standard Flutter toolbar height
+      height: kToolbarHeight, 
       padding: const EdgeInsets.symmetric(horizontal: 25),
       color: Colors.white,
       child: Row(
@@ -56,7 +53,7 @@ class DesktopNavBar extends StatelessWidget {
           
           const SizedBox(width: 40),
 
-          // 2. NAVIGATION LINKS (CENTERED)
+          // 2. NAVIGATION LINKS
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -70,11 +67,11 @@ class DesktopNavBar extends StatelessWidget {
 
           const Spacer(),
 
-          // 3. ICONS (RIGHT ALIGNED)
+          // 3. ICONS
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Search Icon
+              // Search Icon - THIS WAS LIKELY WORKING BUT CHECK IMPORT
               IconButton(
                 icon: const Icon(Icons.search, size: 26, color: Colors.black87),
                 onPressed: () {
