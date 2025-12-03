@@ -67,11 +67,14 @@ class ProductSearchDelegate extends SearchDelegate {
           title: Text(product.title),
           subtitle: Text('£${product.price.toStringAsFixed(2)}'),
           onTap: () {
-            // Close search and navigate to product
+            // Close search and navigate using Named Route
             close(context, null); 
-            Navigator.push(
+            
+            // FIX: Use pushNamed with the Product argument
+            Navigator.pushNamed(
               context, 
-              MaterialPageRoute(builder: (context) => ProductPage(product: product))
+              '/product', 
+              arguments: product
             );
           },
         );
