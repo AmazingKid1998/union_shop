@@ -1,8 +1,8 @@
 import '../models/product.dart';
 
-// --- FULL DATASET BASED ON YOUR IMAGES ---
+// --- FULL DATASET ---
 final List<Product> _allProducts = [
-  // 3. CLASSIC HOODIE (Clothing) - 3 Colours
+  // 3. CLASSIC HOODIE (Clothing)
   Product(
     id: 'p_classic_hoodie',
     title: 'Classic Hoodie',
@@ -18,12 +18,11 @@ final List<Product> _allProducts = [
     },
   ),
 
-  // 4. ESSENTIAL T-SHIRT (Clothing) - 2 Colours
+  // 4. ESSENTIAL T-SHIRT (Clothing)
   Product(
     id: 'p_essential_tee',
     title: 'Essential T-Shirt',
     price: 12.00,
-    // Not on sale
     image: 'assets/images/essential_blue.webp', 
     description: 'A wardrobe staple. Available in Blue and Green.',
     collectionId: 'c_clothing',
@@ -33,7 +32,7 @@ final List<Product> _allProducts = [
     },
   ),
 
-  // 6. SIGNATURE RANGE (Clothing) - 2 Colours
+  // 6. SIGNATURE RANGE (Clothing)
   Product(
     id: 'p_signature',
     title: 'Signature T-Shirt',
@@ -47,7 +46,7 @@ final List<Product> _allProducts = [
     },
   ),
 
-  // 5. HALLOWEEN (Halloween) - 2 Styles
+  // 5. HALLOWEEN (Halloween)
   Product(
     id: 'p_halloween',
     title: 'Spooky Tote Bag',
@@ -79,12 +78,30 @@ final List<Product> _allProducts = [
     collectionId: 'c_grad',
   ),
 
+  // --- NEW: PORTSMOUTH CITY COLLECTION ---
+  Product(
+    id: 'p_city_postcard',
+    title: 'Portsmouth City Postcard',
+    price: 1.00,
+    image: 'assets/images/city_postcard.webp', // Ensure you rename your uploaded file to this
+    description: 'Send a piece of Portsmouth to friends and family with this illustrated postcard.',
+    collectionId: 'c_city',
+  ),
+  Product(
+    id: 'p_city_magnet',
+    title: 'Portsmouth City Magnet',
+    price: 4.50,
+    image: 'assets/images/city_magnet.webp', // Ensure you rename your uploaded file to this
+    description: 'Decorate your fridge with this classic Portsmouth City magnet.',
+    collectionId: 'c_city',
+  ),
+
   // 2. MERCHANDISE (Merchandise)
   Product(
     id: 'p_merch_1',
     title: 'Lanyard',
-    price: 5.00,     // Sale Price
-    oldPrice: 8.00,  // Original Price -> ON SALE
+    price: 5.00,     
+    oldPrice: 8.00,  
     image: 'assets/images/merchendise_p1.webp',
     description: 'University branded lanyard.',
     collectionId: 'c_merch',
@@ -92,8 +109,8 @@ final List<Product> _allProducts = [
   Product(
     id: 'p_merch_2',
     title: 'Uni Pen',
-    price: 3.00,     // Sale Price
-    oldPrice: 5.00,  // Original Price -> ON SALE
+    price: 3.00,     
+    oldPrice: 5.00,  
     image: 'assets/images/merchendise_p2.webp',
     description: 'Branded Pen',
     collectionId: 'c_merch',
@@ -140,7 +157,6 @@ class ProductRepository {
     return _allProducts.where((p) => p.collectionId == collectionId).toList();
   }
   
-  // This method grabs ALL products with an oldPrice, regardless of category
   List<Product> getSaleProducts() {
     return _allProducts.where((p) => p.oldPrice != null).toList();
   }
