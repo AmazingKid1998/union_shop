@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/shop_viewmodel.dart';
 import '../models/product.dart';
-import 'product_page.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 
-// Import the enum
+// Import enum if needed for filtering logic later
 import '../viewmodels/shop_viewmodel.dart' show SortOption;
 
-// Define a map for price range filtering
-// Key: Display Name, Value: Max Price (or -1 for All)
+// Define price ranges (Same as before, kept for consistent filtering UI)
 const Map<String, double> priceRanges = {
-  'All Prices': 1000.0, // Effectively infinite
+  'All Prices': 1000.0, 
   'Under £10': 9.99,
   '£10 - £20': 20.00,
-  'Over £20': 1000.0, // We handle the "over" logic in the ViewModel
+  'Over £20': 1000.0, 
 };
-
 
 class CollectionDetailPage extends StatefulWidget {
   final String collectionId;
@@ -36,20 +33,22 @@ class CollectionDetailPage extends StatefulWidget {
 class _CollectionDetailPageState extends State<CollectionDetailPage> {
   // State for Sort and Filter
   SortOption? _selectedSort;
-  String _selectedPriceRange = priceRanges.keys.first; // Default to 'All Prices'
+  String _selectedPriceRange = priceRanges.keys.first; 
 
   @override
   Widget build(BuildContext context) {
-    // Determine the max price filter value
+    // 1. Determine filter values
     double maxPriceFilter = priceRanges[_selectedPriceRange]!;
     
-    // Pass sort/filter params to ViewModel
+    // 2. Access ViewModel
     final shopVM = Provider.of<ShopViewModel>(context);
+    
+    // 3. Fetch Data with Filters
     final products = shopVM.getByCollection(
       widget.collectionId, 
       sortOption: _selectedSort,
-      maxPrice: maxPriceFilter, // Pass max price filter
-      priceRangeName: _selectedPriceRange // Pass range name for specific "Over £20" logic
+      maxPrice: maxPriceFilter, 
+      priceRangeName: _selectedPriceRange 
     );
 
     return Scaffold(
@@ -57,6 +56,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // --- HEADER SECTION ---
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
               child: Column(
@@ -65,7 +65,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                   Text(widget.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   
-                  // CONTROLS ROW
+                  // CONTROLS ROW (Sort & Filter)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -87,7 +87,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                       
                       const Spacer(),
                       
-                      // Filter Dropdown (Replaces Slider)
+                      // Filter Dropdown
                       DropdownButton<String>(
                         value: _selectedPriceRange,
                         onChanged: (String? newValue) {
@@ -104,13 +104,11 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                       ),
                     ],
                   ),
-                  
-                  // Price Filter Slider removed
-                  
                 ],
               ),
             ),
             
+            // --- PRODUCT GRID ---
             if (products.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(40.0),
@@ -143,12 +141,15 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
     );
   }
 
+  // --- UPDATED NAVIGATION LOGIC HERE ---
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ProductPage(product: product)),
+        // FIX: Use Named Route consistent with main.dart
+        Navigator.pushNamed(
+          context, 
+          '/product', 
+          arguments: product // Passing the full Product object as defined in main.dart logic
         );
       },
       child: Column(
@@ -158,7 +159,11 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
             child: Container(
               width: double.infinity,
               color: Colors.grey[100],
-              child: Image.asset(product.image, fit: BoxFit.cover, errorBuilder: (c, o, s) => const Icon(Icons.image, size: 50, color: Colors.grey)),
+              child: Image.asset(
+                product.image, 
+                fit: BoxFit.cover, 
+                errorBuilder: (c, o, s) => const Icon(Icons.image, size: 50, color: Colors.grey)
+              ),
             ),
           ),
           const SizedBox(height: 12),

@@ -11,7 +11,6 @@ class SalePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // MVVM: Access the ShopViewModel to get sale items
     final shopVM = Provider.of<ShopViewModel>(context);
     final saleProducts = shopVM.getSaleItems();
 
@@ -20,7 +19,6 @@ class SalePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- NEW MINIMAL HEADER ---
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               child: Column(
@@ -45,7 +43,6 @@ class SalePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
                   
-                  // Small note with icon
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -66,7 +63,6 @@ class SalePage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // GRID (Same clean card design from before)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: GridView.builder(
@@ -95,12 +91,16 @@ class SalePage extends StatelessWidget {
   Widget _buildSaleCard(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (c) => ProductPage(product: product)));
+        // NAV CHANGE: Use Named Route with Argument
+        Navigator.pushNamed(
+          context, 
+          '/product', 
+          arguments: product
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // IMAGE (Clean, white background)
           Expanded(
             child: Container(
               width: double.infinity,
@@ -110,7 +110,6 @@ class SalePage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           
-          // Title
           Text(
             product.title,
             maxLines: 2,
@@ -123,7 +122,6 @@ class SalePage extends StatelessWidget {
           ),
           const SizedBox(height: 5),
 
-          // PRICE ROW
           Row(
             children: [
               Text(
