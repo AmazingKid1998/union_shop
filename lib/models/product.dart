@@ -5,7 +5,8 @@ class Product {
   final double? oldPrice;
   final String image;
   final String description;
-  final String collectionId;
+  // CHANGED: From single String to List<String>
+  final List<String> collectionIds;
   final Map<String, String>? variants;
 
   Product({
@@ -15,7 +16,7 @@ class Product {
     this.oldPrice,
     required this.image,
     required this.description,
-    required this.collectionId,
+    required this.collectionIds,
     this.variants,
   });
 
@@ -28,13 +29,21 @@ class Product {
       'oldPrice': oldPrice,
       'image': image,
       'description': description,
-      'collectionId': collectionId,
+      'collectionIds': collectionIds, // Save list
       'variants': variants,
     };
   }
 
   // Create a Product from a Map (JSON)
   factory Product.fromJson(Map<String, dynamic> json) {
+    // Handle migration: if JSON has old 'collectionId', wrap it in a list
+    List<String> parsedIds = [];
+    if (json['collectionIds'] != null) {
+      parsedIds = List<String>.from(json['collectionIds']);
+    } else if (json['collectionId'] != null) {
+      parsedIds = [json['collectionId']];
+    }
+
     return Product(
       id: json['id'],
       title: json['title'],
@@ -42,7 +51,7 @@ class Product {
       oldPrice: json['oldPrice'] != null ? (json['oldPrice'] as num).toDouble() : null,
       image: json['image'],
       description: json['description'],
-      collectionId: json['collectionId'],
+      collectionIds: parsedIds,
       variants: json['variants'] != null ? Map<String, String>.from(json['variants']) : null,
     );
   }
