@@ -43,7 +43,7 @@ class _ProductPageState extends State<ProductPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. PRODUCT IMAGE
+            // Product Image
             Container(
               height: 350,
               width: double.infinity,
@@ -94,7 +94,7 @@ class _ProductPageState extends State<ProductPage> {
                   
                   // 2. VARIANT SELECTOR
                   if (hasVariants) ...[
-                    Text('Select Option: $_selectedVariant', style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Text('Select Option: ${_selectedVariant ?? ''}', style: const TextStyle(fontWeight: FontWeight.bold)),
                     const SizedBox(height: 10),
                     Wrap(
                       spacing: 10,
@@ -162,10 +162,10 @@ class _ProductPageState extends State<ProductPage> {
                          // Build the unique product instance for the cart
                          final cartProduct = Product(
                            id: product.id + (_selectedVariant ?? ''),
-                           title: hasVariants ? '${product.title}' : product.title, // Title remains clean
+                           title: hasVariants ? '${product.title}' : product.title, 
                            price: product.price,
                            image: _currentImage, 
-                           description: 'Variant: $_selectedVariant', // NEW: Save variant in description
+                           description: 'Variant: ${_selectedVariant ?? 'Default'}', // Save variant in description
                            collectionId: product.collectionId,
                            oldPrice: product.oldPrice
                          );
@@ -178,6 +178,7 @@ class _ProductPageState extends State<ProductPage> {
                            SnackBar(content: Text('${product.title} added (x$_quantity)!'))
                          );
                          
+                         // NAV CHANGE: Use Named Route
                          Navigator.pushNamed(context, '/cart');
                       },
                       child: const Text('ADD TO CART', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
