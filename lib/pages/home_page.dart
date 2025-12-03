@@ -16,9 +16,12 @@ class HomePage extends StatelessWidget {
     final allProducts = shopVM.products;
 
     // 1. Get unique categories
-    final Set<String> uniqueCategories = {};
+    final Map<String, Product> categoryMap = {};
+    
     for (var product in allProducts) {
-      uniqueCategories.add(product.collectionId);
+      if (!categoryMap.containsKey(product.collectionId)) {
+        categoryMap[product.collectionId] = product;
+      }
     }
 
     return Scaffold(
@@ -29,17 +32,15 @@ class HomePage extends StatelessWidget {
             const HomeCarousel(),
             
             const SizedBox(height: 40),
-
-            // "Essential Range" Text Removed
             
-            // 2. Loop through each category and build a section
-            if (allProducts.isEmpty)
+            // 2. Build a section for each category found
+            if (categoryMap.isEmpty)
                const Center(child: CircularProgressIndicator())
             else
                Column(
-                 children: uniqueCategories.map((categoryId) {
-                   // Find the first product for this category
-                   final product = allProducts.firstWhere((p) => p.collectionId == categoryId);
+                 children: categoryMap.entries.map((entry) {
+                   String categoryId = entry.key;
+                   Product product = entry.value;
                    
                    String categoryName = _formatCategoryName(categoryId);
 
@@ -93,15 +94,16 @@ class HomePage extends StatelessWidget {
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProductPage(product: product),
-          ),
+        // NAV CHANGE: Use Named Route with Argument
+        Navigator.pushNamed(
+          context, 
+          '/product',
+          arguments: product
         );
       },
       child: Container(
         width: 200,
+        color: Colors.transparent,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
