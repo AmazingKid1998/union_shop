@@ -16,11 +16,16 @@ class HomePage extends StatelessWidget {
     final allProducts = shopVM.products;
 
     // 1. Get unique categories
+    // We iterate through all products. Since a product has multiple IDs,
+    // we take the FIRST ID as its "Primary" category for the homepage display.
     final Map<String, Product> categoryMap = {};
     
     for (var product in allProducts) {
-      if (!categoryMap.containsKey(product.collectionId)) {
-        categoryMap[product.collectionId] = product;
+      if (product.collectionIds.isNotEmpty) {
+        String primaryCategory = product.collectionIds.first;
+        if (!categoryMap.containsKey(primaryCategory)) {
+          categoryMap[primaryCategory] = product;
+        }
       }
     }
 
@@ -33,7 +38,6 @@ class HomePage extends StatelessWidget {
             
             const SizedBox(height: 40),
             
-            // 2. Build a section for each category found
             if (categoryMap.isEmpty)
                const Center(child: CircularProgressIndicator())
             else
@@ -46,7 +50,6 @@ class HomePage extends StatelessWidget {
 
                    return Column(
                      children: [
-                       // Category Header
                        Padding(
                          padding: const EdgeInsets.symmetric(vertical: 15.0),
                          child: Text(
@@ -58,10 +61,7 @@ class HomePage extends StatelessWidget {
                            )
                          ),
                        ),
-                       
-                       // The Single Product Card
                        _buildProductItem(context, product),
-                       
                        const SizedBox(height: 30),
                      ],
                    );
@@ -69,7 +69,6 @@ class HomePage extends StatelessWidget {
                ),
 
             const SizedBox(height: 40),
-
             const SiteFooter(),
           ],
         ),
@@ -77,7 +76,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  // Helper to make category IDs look nice
   String _formatCategoryName(String id) {
     switch (id) {
       case 'c_clothing': return 'Clothing';
@@ -87,6 +85,7 @@ class HomePage extends StatelessWidget {
       case 'c_city': return 'Portsmouth City';
       case 'c_pride': return 'Pride Collection';
       case 'c_signature': return 'Signature Range';
+      case 'c_essential': return 'Essential Range'; // Added this
       default: return id.replaceAll('c_', '').toUpperCase();
     }
   }
@@ -94,7 +93,6 @@ class HomePage extends StatelessWidget {
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Deep Link URL ID
         Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Container(
