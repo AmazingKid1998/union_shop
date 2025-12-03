@@ -196,12 +196,12 @@ class _PrintShackPageState extends State<PrintShackPage> {
                              price: _currentPrice,
                              image: _productImage,
                              description: finalDescription, 
-                             collectionId: 'custom',
+                             collectionIds: ['custom'], // UPDATED: Pass list
                            );
                            cartVM.add(customProduct); 
                          }
 
-                         // NAV CHANGE: Use Named Route
+                         // NAV CHANGE: Use Named Route for Cart
                          Navigator.pushNamed(context, '/cart').then((_) => setState(() {}));
                       },
                       child: const Text('ADD TO CART', style: TextStyle(color: Color(0xFF4B0082), fontWeight: FontWeight.bold, letterSpacing: 1.5)),
