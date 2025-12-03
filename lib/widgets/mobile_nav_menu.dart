@@ -116,10 +116,17 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
   }
 
   // --- 2. SHOP SUBMENU ---
+  // --- 2. SHOP SUBMENU (FIXED) ---
   Widget _buildShopMenu() {
+    // Helper now uses pushNamed to utilize main.dart routing
     void navTo(String id, String title) {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => CollectionDetailPage(collectionId: id, title: title)));
+      Navigator.pushNamed(
+        context, 
+        '/collection', 
+        arguments: {'id': id, 'title': title}
+      );
     }
+
     return ListView(
       children: [
         _buildMenuItem('Clothing', onTap: () => navTo('c_clothing', 'Clothing')),
@@ -132,7 +139,6 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
       ],
     );
   }
-
   // --- 3. PRINT SHACK SUBMENU (MATCHES YOUR SCREENSHOT) ---
   Widget _buildPrintShackMenu() {
     return ListView(
