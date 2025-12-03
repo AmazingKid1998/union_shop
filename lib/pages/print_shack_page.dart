@@ -59,7 +59,6 @@ class _PrintShackPageState extends State<PrintShackPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Access the Cart ViewModel
     final cartVM = Provider.of<CartViewModel>(context, listen: false);
 
     return Scaffold(
@@ -68,7 +67,11 @@ class _PrintShackPageState extends State<PrintShackPage> {
         child: Column(
           children: [
             // Breadcrumb
-            Container(alignment: Alignment.centerLeft, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10), child: const Text('Home / Personalise Text', style: TextStyle(color: Colors.grey))),
+            Container(
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: const Text('Home / Personalise Text', style: TextStyle(color: Colors.grey)),
+            ),
 
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -79,8 +82,17 @@ class _PrintShackPageState extends State<PrintShackPage> {
                   Container(
                     height: 300,
                     width: double.infinity,
-                    decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey[200]!)),
-                    child: Image.asset(_productImage, fit: BoxFit.cover, errorBuilder: (c, e, s) => const Center(child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey))),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey[200]!)
+                    ),
+                    child: Image.asset(
+                      _productImage,
+                      fit: BoxFit.cover,
+                      errorBuilder: (c, e, s) => const Center(
+                        child: Icon(Icons.image_not_supported, size: 50, color: Colors.grey)
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 30),
@@ -99,7 +111,10 @@ class _PrintShackPageState extends State<PrintShackPage> {
                   const SizedBox(height: 5),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    decoration: BoxDecoration(border: Border.all(color: Colors.black54), borderRadius: BorderRadius.circular(4)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black54), 
+                      borderRadius: BorderRadius.circular(4)
+                    ),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: _selectedOption,
@@ -183,9 +198,10 @@ class _PrintShackPageState extends State<PrintShackPage> {
                              description: finalDescription, 
                              collectionId: 'custom',
                            );
-                           cartVM.add(customProduct); // Use ViewModel action
+                           cartVM.add(customProduct); 
                          }
 
+                         // NAV CHANGE: Use Named Route
                          Navigator.pushNamed(context, '/cart').then((_) => setState(() {}));
                       },
                       child: const Text('ADD TO CART', style: TextStyle(color: Color(0xFF4B0082), fontWeight: FontWeight.bold, letterSpacing: 1.5)),
