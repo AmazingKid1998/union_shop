@@ -8,7 +8,7 @@ import '../widgets/site_footer.dart';
 // Import enum if needed for filtering logic later
 import '../viewmodels/shop_viewmodel.dart' show SortOption;
 
-// Define price ranges (Same as before, kept for consistent filtering UI)
+// Define price ranges
 const Map<String, double> priceRanges = {
   'All Prices': 1000.0, 
   'Under £10': 9.99,
@@ -141,16 +141,11 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
     );
   }
 
-  // --- UPDATED NAVIGATION LOGIC HERE ---
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // FIX: Use Named Route consistent with main.dart
-        Navigator.pushNamed(
-          context, 
-          '/product', 
-          arguments: product // Passing the full Product object as defined in main.dart logic
-        );
+        // NAV CHANGE: Use Deep Link URL ID
+        Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

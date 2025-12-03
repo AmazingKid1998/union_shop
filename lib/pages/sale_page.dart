@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/shop_viewmodel.dart';
 import '../models/product.dart';
-import 'product_page.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 
@@ -91,12 +90,8 @@ class SalePage extends StatelessWidget {
   Widget _buildSaleCard(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Named Route with Argument
-        Navigator.pushNamed(
-          context, 
-          '/product', 
-          arguments: product
-        );
+        // NAV CHANGE: Use Deep Link URL ID
+        Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

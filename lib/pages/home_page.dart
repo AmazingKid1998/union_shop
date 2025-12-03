@@ -94,12 +94,8 @@ class HomePage extends StatelessWidget {
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Named Route with Argument
-        Navigator.pushNamed(
-          context, 
-          '/product',
-          arguments: product
-        );
+        // NAV CHANGE: Use Deep Link URL ID
+        Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Container(
         width: 200,
