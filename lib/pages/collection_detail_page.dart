@@ -9,6 +9,16 @@ import '../widgets/site_footer.dart';
 // Import the enum
 import '../viewmodels/shop_viewmodel.dart' show SortOption;
 
+// Define a map for price range filtering
+// Key: Display Name, Value: Max Price (or -1 for All)
+const Map<String, double> priceRanges = {
+  'All Prices': 1000.0, // Effectively infinite
+  'Under £10': 9.99,
+  '£10 - £20': 20.00,
+  'Over £20': 1000.0, // We handle the "over" logic in the ViewModel
+};
+
+
 class CollectionDetailPage extends StatefulWidget {
   final String collectionId;
   final String title;
@@ -26,16 +36,20 @@ class CollectionDetailPage extends StatefulWidget {
 class _CollectionDetailPageState extends State<CollectionDetailPage> {
   // State for Sort and Filter
   SortOption? _selectedSort;
-  double _currentSliderValue = 100; // Default max price filter
+  String _selectedPriceRange = priceRanges.keys.first; // Default to 'All Prices'
 
   @override
   Widget build(BuildContext context) {
+    // Determine the max price filter value
+    double maxPriceFilter = priceRanges[_selectedPriceRange]!;
+    
     // Pass sort/filter params to ViewModel
     final shopVM = Provider.of<ShopViewModel>(context);
     final products = shopVM.getByCollection(
       widget.collectionId, 
       sortOption: _selectedSort,
-      maxPrice: _currentSliderValue // Pass max price filter
+      maxPrice: maxPriceFilter, // Pass max price filter
+      priceRangeName: _selectedPriceRange // Pass range name for specific "Over £20" logic
     );
 
     return Scaffold(
@@ -53,6 +67,7 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                   
                   // CONTROLS ROW
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Sort Dropdown
                       DropdownButton<SortOption>(
@@ -72,24 +87,26 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                       
                       const Spacer(),
                       
-                      // Simple Filter Label (Visual cue)
-                      Text('Max Price: £${_currentSliderValue.round()}'),
+                      // Filter Dropdown (Replaces Slider)
+                      DropdownButton<String>(
+                        value: _selectedPriceRange,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedPriceRange = newValue!;
+                          });
+                        },
+                        items: priceRanges.keys.map((String range) {
+                          return DropdownMenuItem<String>(
+                            value: range,
+                            child: Text('Filter: $range'),
+                          );
+                        }).toList(),
+                      ),
                     ],
                   ),
                   
-                  // Price Filter Slider
-                  Slider(
-                    value: _currentSliderValue,
-                    min: 0,
-                    max: 100,
-                    divisions: 10,
-                    label: _currentSliderValue.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    },
-                  ),
+                  // Price Filter Slider removed
+                  
                 ],
               ),
             ),
