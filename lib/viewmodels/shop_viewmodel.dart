@@ -21,12 +21,19 @@ class ShopViewModel extends ChangeNotifier {
   }
 
   // Helper methods that the UI calls
-  List<Product> getByCollection(String id, {SortOption? sortOption, double? maxPrice}) {
+  List<Product> getByCollection(String id, {SortOption? sortOption, double? maxPrice, String? priceRangeName}) {
     List<Product> items = _productRepository.getProductsByCollection(id);
     
-    // 1. FILTERING (e.g. Max Price)
-    if (maxPrice != null) {
-      items = items.where((p) => p.price <= maxPrice).toList();
+    // 1. FILTERING (Now based on Dropdown selection and price range)
+    if (priceRangeName != null) {
+      if (priceRangeName == 'Under £10') {
+        items = items.where((p) => p.price < 10.00).toList();
+      } else if (priceRangeName == '£10 - £20') {
+        items = items.where((p) => p.price >= 10.00 && p.price <= 20.00).toList();
+      } else if (priceRangeName == 'Over £20') {
+        items = items.where((p) => p.price > 20.00).toList();
+      }
+      // If 'All Prices', no filter is applied
     }
 
     // 2. SORTING
