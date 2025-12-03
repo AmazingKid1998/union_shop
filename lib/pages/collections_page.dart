@@ -23,8 +23,8 @@ class CollectionsPage extends StatelessWidget {
               child: GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2, // 2 items per row
-                childAspectRatio: 0.8, // Taller cards to fit text
+                crossAxisCount: 2, 
+                childAspectRatio: 0.8, 
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
                 children: [
@@ -49,12 +49,8 @@ class CollectionsPage extends StatelessWidget {
   Widget _buildCategoryCard(BuildContext context, String title, String id, String imagePath) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Named Route with Map Arguments
-        Navigator.pushNamed(
-          context, 
-          '/collection', 
-          arguments: {'id': id, 'title': title}
-        );
+        // NAV CHANGE: Use Deep Link URL path
+        Navigator.pushNamed(context, '/collection/$id');
       },
       child: Container(
         decoration: BoxDecoration(
