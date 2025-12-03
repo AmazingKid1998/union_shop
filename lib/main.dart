@@ -7,7 +7,7 @@ import 'viewmodels/cart_viewmodel.dart';
 
 // Models
 import 'models/product.dart';
-// REPO IMPORT (Crucial for looking up products by ID from the URL)
+// REPO IMPORT
 import 'repositories/product_repository.dart'; 
 
 // Pages
@@ -53,14 +53,16 @@ class UnionShopApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         // 1. Handle "/" (Home)
         if (settings.name == '/') {
-          return MaterialPageRoute(builder: (_) => const HomePage());
+          return MaterialPageRoute(
+            builder: (_) => const HomePage(),
+            settings: settings, // FIX: Pass settings here
+          );
         }
 
         // 2. Parse the URI to handle deep links
         final uri = Uri.parse(settings.name ?? '');
         
         // --- ROUTE: COLLECTION DETAILS ---
-        // Matches: /collection/c_clothing
         if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'collection') {
           final id = uri.pathSegments[1];
           final title = _getCollectionTitle(id); 
@@ -70,43 +72,40 @@ class UnionShopApp extends StatelessWidget {
               collectionId: id,
               title: title,
             ),
-            settings: settings,
+            settings: settings, // This was already correct
           );
         }
 
-        // --- ROUTE: PRODUCT DETAILS (NEW) ---
-        // Matches: /product/p_classic_hoodie
+        // --- ROUTE: PRODUCT DETAILS ---
         if (uri.pathSegments.length == 2 && uri.pathSegments[0] == 'product') {
           final id = uri.pathSegments[1];
-          
-          // Look up the product using the Repository based on the ID from URL
-          // (Since your dummy data is local/sync, this works immediately)
           final product = ProductRepository().getProductById(id);
           
           return MaterialPageRoute(
             builder: (_) => ProductPage(product: product),
-            settings: settings,
+            settings: settings, // This was already correct
           );
         }
 
-        // --- STATIC ROUTES ---
+        // --- STATIC ROUTES (FIXED) ---
+        // Added 'settings: settings' to ALL routes below to fix URL updates
         switch (settings.name) {
           case '/about':
-            return MaterialPageRoute(builder: (_) => const AboutPage());
+            return MaterialPageRoute(builder: (_) => const AboutPage(), settings: settings);
           case '/shop':
-            return MaterialPageRoute(builder: (_) => const CollectionsPage());
+            return MaterialPageRoute(builder: (_) => const CollectionsPage(), settings: settings);
           case '/cart':
-            return MaterialPageRoute(builder: (_) => const CartPage());
+            return MaterialPageRoute(builder: (_) => const CartPage(), settings: settings);
           case '/login':
-            return MaterialPageRoute(builder: (_) => const LoginPage());
+            return MaterialPageRoute(builder: (_) => const LoginPage(), settings: settings);
           case '/sale':
-            return MaterialPageRoute(builder: (_) => const SalePage());
+            return MaterialPageRoute(builder: (_) => const SalePage(), settings: settings);
           case '/print-shack':
-            return MaterialPageRoute(builder: (_) => const PrintShackMenuPage());
+            return MaterialPageRoute(builder: (_) => const PrintShackMenuPage(), settings: settings);
           case '/print-shack/tool':
-            return MaterialPageRoute(builder: (_) => const PrintShackPage());
+            return MaterialPageRoute(builder: (_) => const PrintShackPage(), settings: settings);
           case '/print-shack/about':
-            return MaterialPageRoute(builder: (_) => const PrintShackAboutPage());
+            return MaterialPageRoute(builder: (_) => const PrintShackAboutPage(), settings: settings);
         }
 
         return _errorRoute();
@@ -114,7 +113,6 @@ class UnionShopApp extends StatelessWidget {
     );
   }
 
-  // Helper to map IDs to Titles
   String _getCollectionTitle(String id) {
     switch (id) {
       case 'c_clothing': return 'Clothing';
