@@ -116,30 +116,26 @@ class _MobileNavMenuState extends State<MobileNavMenu> {
   }
 
   // --- 2. SHOP SUBMENU ---
-  // --- 2. SHOP SUBMENU (FIXED) ---
   Widget _buildShopMenu() {
-    // Helper now uses pushNamed to utilize main.dart routing
-    void navTo(String id, String title) {
-      Navigator.pushNamed(
-        context, 
-        '/collection', 
-        arguments: {'id': id, 'title': title}
-      );
+    // UPDATED: Push named route with ID in path
+    void navTo(String id) {
+      Navigator.pushNamed(context, '/collection/$id');
     }
-
+    
     return ListView(
       children: [
-        _buildMenuItem('Clothing', onTap: () => navTo('c_clothing', 'Clothing')),
-        _buildMenuItem('Merchandise', onTap: () => navTo('c_merch', 'Merchandise')),
-        _buildMenuItem('Halloween 🎃', onTap: () => navTo('c_halloween', 'Halloween')),
-        _buildMenuItem('Signature & Essential Range', onTap: () => navTo('c_signature', 'Signature Range')),
-        _buildMenuItem('Portsmouth City Collection', onTap: () => navTo('c_city', 'Portsmouth City')),
-        _buildMenuItem('Pride Collection 🏳️‍🌈', onTap: () => navTo('c_pride', 'Pride Collection')),
-        _buildMenuItem('Graduation 🎓', isLast: true, onTap: () => navTo('c_grad', 'Graduation')),
+        _buildMenuItem('Clothing', onTap: () => navTo('c_clothing')),
+        _buildMenuItem('Merchandise', onTap: () => navTo('c_merch')),
+        _buildMenuItem('Halloween 🎃', onTap: () => navTo('c_halloween')),
+        _buildMenuItem('Signature & Essential Range', onTap: () => navTo('c_signature')),
+        _buildMenuItem('Portsmouth City Collection', onTap: () => navTo('c_city')),
+        _buildMenuItem('Pride Collection 🏳️‍🌈', onTap: () => navTo('c_pride')),
+        _buildMenuItem('Graduation 🎓', isLast: true, onTap: () => navTo('c_grad')),
       ],
     );
   }
-  // --- 3. PRINT SHACK SUBMENU (MATCHES YOUR SCREENSHOT) ---
+
+  // --- 3. PRINT SHACK SUBMENU ---
   Widget _buildPrintShackMenu() {
     return ListView(
       children: [
