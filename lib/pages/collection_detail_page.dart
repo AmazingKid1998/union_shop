@@ -6,7 +6,10 @@ import 'product_page.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 
-class CollectionDetailPage extends StatelessWidget {
+// Import the enum
+import '../viewmodels/shop_viewmodel.dart' show SortOption;
+
+class CollectionDetailPage extends StatefulWidget {
   final String collectionId;
   final String title;
 
@@ -17,10 +20,23 @@ class CollectionDetailPage extends StatelessWidget {
   });
 
   @override
+  State<CollectionDetailPage> createState() => _CollectionDetailPageState();
+}
+
+class _CollectionDetailPageState extends State<CollectionDetailPage> {
+  // State for Sort and Filter
+  SortOption? _selectedSort;
+  double _currentSliderValue = 100; // Default max price filter
+
+  @override
   Widget build(BuildContext context) {
-    // Filter products using the Shop ViewModel
+    // Pass sort/filter params to ViewModel
     final shopVM = Provider.of<ShopViewModel>(context);
-    final products = shopVM.getByCollection(collectionId);
+    final products = shopVM.getByCollection(
+      widget.collectionId, 
+      sortOption: _selectedSort,
+      maxPrice: _currentSliderValue // Pass max price filter
+    );
 
     return Scaffold(
       appBar: const SiteHeader(),
@@ -28,17 +44,60 @@ class CollectionDetailPage extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  
+                  // CONTROLS ROW
+                  Row(
+                    children: [
+                      // Sort Dropdown
+                      DropdownButton<SortOption>(
+                        hint: const Text('Sort By'),
+                        value: _selectedSort,
+                        onChanged: (SortOption? newValue) {
+                          setState(() {
+                            _selectedSort = newValue;
+                          });
+                        },
+                        items: const [
+                          DropdownMenuItem(value: SortOption.priceLowToHigh, child: Text('Price: Low to High')),
+                          DropdownMenuItem(value: SortOption.priceHighToLow, child: Text('Price: High to Low')),
+                          DropdownMenuItem(value: SortOption.nameAZ, child: Text('Name: A-Z')),
+                        ],
+                      ),
+                      
+                      const Spacer(),
+                      
+                      // Simple Filter Label (Visual cue)
+                      Text('Max Price: £${_currentSliderValue.round()}'),
+                    ],
+                  ),
+                  
+                  // Price Filter Slider
+                  Slider(
+                    value: _currentSliderValue,
+                    min: 0,
+                    max: 100,
+                    divisions: 10,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
             
             if (products.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(40.0),
-                child: Text('No products found in this collection.', style: TextStyle(color: Colors.grey)),
+                child: Text('No products match your filter.', style: TextStyle(color: Colors.grey)),
               )
             else
               Padding(
@@ -95,7 +154,6 @@ class CollectionDetailPage extends StatelessWidget {
           ),
           const SizedBox(height: 5),
 
-          // Price Logic (handles sale)
           if (product.oldPrice != null)
             Row(
               children: [
