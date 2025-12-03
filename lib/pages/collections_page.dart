@@ -28,25 +28,12 @@ class CollectionsPage extends StatelessWidget {
                 mainAxisSpacing: 15,
                 crossAxisSpacing: 15,
                 children: [
-                  // 1. Clothing (Existing)
                   _buildCategoryCard(context, 'Clothing', 'c_clothing', 'assets/images/clothing_cat.jpg'),
-                  
-                  // 2. Merchandise (Existing)
                   _buildCategoryCard(context, 'Merchandise', 'c_merch', 'assets/images/merch_cat.jpg'),
-                  
-                  // 3. Halloween (NEW ASSET)
                   _buildCategoryCard(context, 'Halloween 🎃', 'c_halloween', 'assets/images/halloween_cat.jpg'),
-                  
-                  // 4. Signature Range (Reusing clothing or generic for now unless you have one)
                   _buildCategoryCard(context, 'Signature Range', 'c_signature', 'assets/images/clothing_cat.jpg'), 
-                  
-                  // 5. Portsmouth City (NEW ASSET)
                   _buildCategoryCard(context, 'Portsmouth City', 'c_city', 'assets/images/portsmouth_cat.jpg'),
-                  
-                  // 6. Pride (NEW ASSET)
                   _buildCategoryCard(context, 'Pride 🏳️‍🌈', 'c_pride', 'assets/images/pride_cat.jpg'),
-                  
-                  // 7. Graduation (NEW ASSET)
                   _buildCategoryCard(context, 'Graduation 🎓', 'c_grad', 'assets/images/graduation_cat.jpg'),
                 ],
               ),
@@ -62,11 +49,11 @@ class CollectionsPage extends StatelessWidget {
   Widget _buildCategoryCard(BuildContext context, String title, String id, String imagePath) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CollectionDetailPage(collectionId: id, title: title),
-          ),
+        // NAV CHANGE: Use Named Route with Map Arguments
+        Navigator.pushNamed(
+          context, 
+          '/collection', 
+          arguments: {'id': id, 'title': title}
         );
       },
       child: Container(
@@ -84,7 +71,6 @@ class CollectionsPage extends StatelessWidget {
                 child: Image.asset(
                   imagePath, 
                   fit: BoxFit.cover,
-                  // If the specific category image is missing, show a grey box with an icon
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey[200],
