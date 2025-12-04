@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
-import '../services/auth_service.dart'; // Import service
-import 'signup_page.dart'; // We will create this next
+import '../services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,13 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
-
-  @override
-  void initState() {
-    super.initState();
-    // Load the JSON data when page opens
-    _authService.loadUsers();
-  }
+  bool _isLoading = false; // Add loading state
 
   @override
   Widget build(BuildContext context) {
@@ -64,25 +57,34 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4B0082), padding: const EdgeInsets.symmetric(vertical: 15)),
-                      onPressed: () {
-                        // 1. Call the Login function
-                        bool success = _authService.login(_emailController.text, _passwordController.text);
+                      onPressed: _isLoading ? null : () async { // Disable button while loading
+                        setState(() => _isLoading = true);
                         
-                        if (success) {
+                        // Call Async Login
+                        String? error = await _authService.login(
+                          _emailController.text.trim(), 
+                          _passwordController.text.trim()
+                        );
+                        
+                        setState(() => _isLoading = false);
+
+                        if (error == null) {
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Login Successful!')));
-                          Navigator.pushReplacementNamed(context, '/'); // Go Home
+                          Navigator.pushReplacementNamed(context, '/'); 
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.red, content: Text('Invalid Email or Password')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.red, content: Text(error)));
                         }
                       },
-                      child: const Text('Sign In', style: TextStyle(color: Colors.white, fontSize: 18)),
+                      child: _isLoading 
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))
+                        : const Text('Sign In', style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
                   ),
                   
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: () {
-                       Navigator.push(context, MaterialPageRoute(builder: (c) => const SignupPage()));
+                       Navigator.pushNamed(context, '/signup'); // Assuming you have a route for this or direct push
                     }, 
                     child: const Text('Create an account')
                   ),
