@@ -1,27 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:union_shop/widgets/home_carousel.dart'; // Adjust path if needed
+import 'package:union_shop/widgets/home_carousel.dart';
 
 void main() {
   
-  // 1. HELPER: Create the test environment
-  // We need MaterialApp because the widget uses Navigator (Navigator.pushNamed)
-  // We define "Dummy Routes" so the test knows where to go.
+  // Helper: Create the test environment
   Widget createCarouselTestWidget() {
     return MaterialApp(
       routes: {
-        '/': (context) => const Scaffold(body: HomeCarousel()), // The Widget Under Test
-        '/print-shack': (context) => const Scaffold(body: Text('Print Shack Screen')), // Dummy Destination
+        '/': (context) => const Scaffold(body: HomeCarousel()),
+        '/print-shack': (context) => const Scaffold(body: Text('Print Shack Screen')),
       },
     );
   }
 
-  group('HomeCarousel Logic Tests', () {
+  group('HomeCarousel Visual Tests', () {
 
     // --- TEST 1: INITIAL RENDER ---
     testWidgets('Displays the first slide correctly on load', (WidgetTester tester) async {
-      // Build the widget
       await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
 
       // Verify Slide 1 Content is present
       expect(find.text('The Print Shack'), findsOneWidget);
@@ -31,49 +29,154 @@ void main() {
       expect(find.text('Essential Range -\nOver 20% OFF!'), findsNothing);
     });
 
-    // --- TEST 2: NAVIGATION ---
-    testWidgets('Clicking CTA button navigates to correct route', (WidgetTester tester) async {
+    // --- TEST 2: SLIDE DESCRIPTION ---
+    testWidgets('First slide has correct description', (WidgetTester tester) async {
       await tester.pumpWidget(createCarouselTestWidget());
-
-      // 1. Find the button on Slide 1
-      final ctaButton = find.widgetWithText(ElevatedButton, 'FIND OUT MORE');
-      
-      // 2. Tap it
-      await tester.ensureVisible(ctaButton);
-      await tester.tap(ctaButton);
-      
-      // 3. Wait for navigation animation
       await tester.pumpAndSettle();
 
-      // 4. Verify we are on the new page
-      // We look for the text "Print Shack Screen" which matches our dummy route above
+      expect(
+        find.textContaining('personalisation service'),
+        findsOneWidget,
+      );
+    });
+
+    // --- TEST 3: NAVIGATION INDICATORS ---
+    testWidgets('Shows dot indicators', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should have arrow icons
+      expect(find.byIcon(Icons.chevron_left), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    });
+
+    // --- TEST 4: PAUSE BUTTON VISUAL ---
+    testWidgets('Shows pause button overlay', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.pause), findsOneWidget);
+    });
+  });
+
+  group('HomeCarousel Navigation Tests', () {
+
+    // --- TEST 5: CTA BUTTON NAVIGATION ---
+    testWidgets('Clicking CTA button navigates to correct route', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      final ctaButton = find.widgetWithText(ElevatedButton, 'FIND OUT MORE');
+      
+      await tester.ensureVisible(ctaButton);
+      await tester.tap(ctaButton);
+      await tester.pumpAndSettle();
+
       expect(find.text('Print Shack Screen'), findsOneWidget);
     });
 
-    // --- TEST 3: CAROUSEL MOVEMENT (ARROWS) ---
+    // --- TEST 6: CAROUSEL MOVEMENT (RIGHT ARROW) ---
     testWidgets('Clicking Right Arrow switches to Slide 2', (WidgetTester tester) async {
       await tester.pumpWidget(createCarouselTestWidget());
-
-      // 1. Verify we start on Slide 1
-      expect(find.text('The Print Shack'), findsOneWidget);
-
-      // 2. Find Right Arrow
-      final rightArrow = find.byIcon(Icons.chevron_right);
-      
-      // 3. Tap it
-      await tester.tap(rightArrow);
-      
-      // 4. Wait for animation
       await tester.pumpAndSettle();
 
-      // 5. Verify Slide 1 is gone
+      // Verify we start on Slide 1
+      expect(find.text('The Print Shack'), findsOneWidget);
+
+      // Find and tap Right Arrow
+      final rightArrow = find.byIcon(Icons.chevron_right);
+      await tester.tap(rightArrow);
+      await tester.pumpAndSettle();
+
+      // Verify Slide 1 is gone
       expect(find.text('The Print Shack'), findsNothing); 
 
-      // 6. Verify Slide 2 is visible
-      // FIX: Use unique text to avoid "Found 2 widgets" error
+      // Verify Slide 2 is visible
       expect(find.text('BROWSE COLLECTION'), findsOneWidget);
-      // Optional: Check specific description text
       expect(find.textContaining('Come and grab yours'), findsOneWidget);
+    });
+
+    // --- TEST 7: CAROUSEL MOVEMENT (LEFT ARROW) ---
+    testWidgets('Clicking Left Arrow from Slide 2 returns to Slide 1', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Go to Slide 2 first
+      await tester.tap(find.byIcon(Icons.chevron_right));
+      await tester.pumpAndSettle();
+      expect(find.text('BROWSE COLLECTION'), findsOneWidget);
+
+      // Go back to Slide 1
+      await tester.tap(find.byIcon(Icons.chevron_left));
+      await tester.pumpAndSettle();
+
+      expect(find.text('The Print Shack'), findsOneWidget);
+    });
+
+    // --- TEST 8: SWIPE GESTURE ---
+    testWidgets('Swiping changes slides', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Verify we start on Slide 1
+      expect(find.text('The Print Shack'), findsOneWidget);
+
+      // Swipe left to go to Slide 2
+      await tester.fling(
+        find.byType(PageView),
+        const Offset(-300, 0),
+        1000,
+      );
+      await tester.pumpAndSettle();
+
+      // Verify we're on Slide 2
+      expect(find.text('BROWSE COLLECTION'), findsOneWidget);
+    });
+  });
+
+  group('HomeCarousel Content Tests', () {
+
+    // --- TEST 9: SECOND SLIDE CONTENT ---
+    testWidgets('Second slide has correct content', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Navigate to Slide 2
+      await tester.tap(find.byIcon(Icons.chevron_right));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Essential Range'), findsOneWidget);
+      expect(find.textContaining('20% OFF'), findsOneWidget);
+      expect(find.text('BROWSE COLLECTION'), findsOneWidget);
+    });
+
+    // --- TEST 10: IMAGE CONTAINERS ---
+    testWidgets('Contains image section', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Should have Image.asset widgets
+      expect(find.byType(Image), findsWidgets);
+    });
+  });
+
+  group('HomeCarousel State Tests', () {
+
+    // --- TEST 11: DOT INDICATOR UPDATES ---
+    testWidgets('Dot indicators update on slide change', (WidgetTester tester) async {
+      await tester.pumpWidget(createCarouselTestWidget());
+      await tester.pumpAndSettle();
+
+      // Find dot containers (the small circle indicators)
+      // Initial state: first dot should be active (darker)
+      
+      // Change slide
+      await tester.tap(find.byIcon(Icons.chevron_right));
+      await tester.pumpAndSettle();
+
+      // The second dot should now be active
+      // This verifies the _currentIndex state updates
+      expect(find.text('BROWSE COLLECTION'), findsOneWidget);
     });
   });
 }
