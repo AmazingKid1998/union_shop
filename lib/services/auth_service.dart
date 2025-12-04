@@ -1,61 +1,45 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  // Singleton pattern so the list persists across pages
+  // Singleton pattern
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
   AuthService._internal();
 
-  List<Map<String, String>> _users = [];
-  bool _isLoaded = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Load users from JSON file (Run this when app starts or login page loads)
-  Future<void> loadUsers() async {
-    if (_isLoaded) return; // Don't reload if already loaded
+  // Get current user (returns null if not logged in)
+  User? get currentUser => _auth.currentUser;
 
+  // Stream to listen to auth state changes (optional, useful for redirecting)
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  // LOGIN: Returns error message string (null if success)
+  Future<String?> login(String email, String password) async {
     try {
-      final String response = await rootBundle.loadString('assets/data/users.json');
-      final List<dynamic> data = json.decode(response);
-      
-      _users = data.map((item) => {
-        'email': item['email'].toString(),
-        'password': item['password'].toString(),
-        'name': item['name'].toString(),
-      }).toList();
-      
-      _isLoaded = true;
-      print("Users Loaded: ${_users.length}");
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message; // Return the specific Firebase error (e.g. "User not found")
     } catch (e) {
-      print("Error loading users: $e");
+      return 'An unknown error occurred.';
     }
   }
 
-  // LOGIN: Check if email/password match
-  bool login(String email, String password) {
-    for (var user in _users) {
-      if (user['email'] == email && user['password'] == password) {
-        return true;
-      }
+  // SIGNUP: Returns error message string (null if success)
+  Future<String?> signup(String email, String password) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message; // e.g. "Email already in use"
+    } catch (e) {
+      return 'An unknown error occurred.';
     }
-    return false;
   }
 
-  // SIGNUP: Add new user to the list
-  bool signup(String email, String password, String name) {
-    // Check if email already exists
-    for (var user in _users) {
-      if (user['email'] == email) return false; // Fail if exists
-    }
-
-    // Add to in-memory list
-    _users.add({
-      'email': email,
-      'password': password,
-      'name': name
-    });
-    
-    print("New User Added: $email");
-    return true; // Success
+  // SIGNOUT
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
