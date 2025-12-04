@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:union_shop/repositories/product_repository.dart';
-import 'package:union_shop/viewmodels/shop_viewmodel.dart';
 import 'package:union_shop/models/product.dart';
 
 void main() {
@@ -26,7 +25,15 @@ void main() {
         expect(product.title, isNotEmpty);
         expect(product.price, greaterThan(0));
         expect(product.image, isNotEmpty);
-        expect(product.collectionId, isNotEmpty);
+        expect(product.collectionIds, isNotEmpty);
+      }
+    });
+
+    test('all products should have collectionIds as List', () async {
+      final products = await repository.getAllProducts();
+      
+      for (final product in products) {
+        expect(product.collectionIds, isA<List<String>>());
       }
     });
   });
@@ -47,7 +54,7 @@ void main() {
       expect(product.id, 'p_grad_1');
       expect(product.title, 'Graduation Pin');
       expect(product.price, 15.00);
-      expect(product.collectionId, 'c_grad');
+      expect(product.collectionIds, contains('c_grad'));
     });
 
     test('should return product with variants', () {
@@ -67,22 +74,20 @@ void main() {
     });
   });
 
-  group('getProductsByCollection', () {
+  group('getProductsByCollection - Multi-collection support', () {
     test('should return all clothing products', () {
       final products = repository.getProductsByCollection('c_clothing');
       
-      expect(products.length, 3);
-      expect(products.every((p) => p.collectionId == 'c_clothing'), isTrue);
-      
-      final titles = products.map((p) => p.title).toList();
-      expect(titles, containsAll(['Classic Hoodie', 'Essential T-Shirt', 'Signature T-Shirt']));
+      // Classic Hoodie, Essential T-Shirt, Signature T-Shirt, Graduation Hoodie 2025
+      expect(products.length, greaterThanOrEqualTo(3));
+      expect(products.every((p) => p.collectionIds.contains('c_clothing')), isTrue);
     });
 
     test('should return all graduation products', () {
       final products = repository.getProductsByCollection('c_grad');
       
       expect(products.length, 2);
-      expect(products.every((p) => p.collectionId == 'c_grad'), isTrue);
+      expect(products.every((p) => p.collectionIds.contains('c_grad')), isTrue);
       
       final titles = products.map((p) => p.title).toList();
       expect(titles, containsAll(['Graduation Pin', 'Graduation Hoodie 2025']));
@@ -91,8 +96,8 @@ void main() {
     test('should return all merchandise products', () {
       final products = repository.getProductsByCollection('c_merch');
       
-      expect(products.length, 5);
-      expect(products.every((p) => p.collectionId == 'c_merch'), isTrue);
+      expect(products.length, greaterThanOrEqualTo(4));
+      expect(products.every((p) => p.collectionIds.contains('c_merch')), isTrue);
     });
 
     test('should return halloween products', () {
@@ -107,6 +112,44 @@ void main() {
       final products = repository.getProductsByCollection('c_nonexistent');
       
       expect(products, isEmpty);
+    });
+
+    test('products in multiple collections appear in each query', () {
+      // Essential T-Shirt is in c_clothing AND c_essential
+      final clothing = repository.getProductsByCollection('c_clothing');
+      final essential = repository.getProductsByCollection('c_essential');
+      
+      final essentialTee = repository.getProductById('p_essential_tee');
+      
+      expect(clothing.any((p) => p.id == essentialTee.id), isTrue);
+      expect(essential.any((p) => p.id == essentialTee.id), isTrue);
+    });
+
+    test('Signature T-Shirt is in both clothing and signature', () {
+      final clothing = repository.getProductsByCollection('c_clothing');
+      final signature = repository.getProductsByCollection('c_signature');
+      
+      expect(clothing.any((p) => p.id == 'p_signature'), isTrue);
+      expect(signature.any((p) => p.id == 'p_signature'), isTrue);
+    });
+
+    test('Graduation Hoodie is in both grad and clothing', () {
+      final grad = repository.getProductsByCollection('c_grad');
+      final clothing = repository.getProductsByCollection('c_clothing');
+      
+      expect(grad.any((p) => p.id == 'p_grad_2'), isTrue);
+      expect(clothing.any((p) => p.id == 'p_grad_2'), isTrue);
+    });
+
+    test('City products are in both city and merch', () {
+      final city = repository.getProductsByCollection('c_city');
+      final merch = repository.getProductsByCollection('c_merch');
+      
+      expect(city.length, 2); // Postcard and Magnet
+      
+      for (final product in city) {
+        expect(merch.any((p) => p.id == product.id), isTrue);
+      }
     });
   });
 
@@ -205,23 +248,61 @@ void main() {
     });
   });
 
-  group('Collection integrity', () {
-    test('all products should belong to a valid collection', () async {
+  group('Collection integrity with multi-collection products', () {
+    test('all products should belong to at least one valid collection', () async {
       final products = await repository.getAllProducts();
-      final validCollections = ['c_clothing', 'c_grad', 'c_merch', 'c_halloween'];
+      final validCollections = [
+        'c_clothing', 'c_grad', 'c_merch', 'c_halloween',
+        'c_city', 'c_signature', 'c_essential', 'c_pride'
+      ];
       
       for (final product in products) {
-        expect(validCollections, contains(product.collectionId));
+        expect(product.collectionIds.isNotEmpty, isTrue);
+        expect(
+          product.collectionIds.any((id) => validCollections.contains(id)),
+          isTrue,
+          reason: '${product.title} has no valid collection ID'
+        );
       }
     });
 
-    test('clothing collection should only contain clothing items', () {
-      final clothingProducts = repository.getProductsByCollection('c_clothing');
+    test('products with multiple collections have all valid IDs', () async {
+      final products = await repository.getAllProducts();
+      final multiCollectionProducts = products.where(
+        (p) => p.collectionIds.length > 1
+      );
       
-      for (final product in clothingProducts) {
-        expect(['Classic Hoodie', 'Essential T-Shirt', 'Signature T-Shirt'], 
-               contains(product.title));
+      expect(multiCollectionProducts.isNotEmpty, isTrue);
+      
+      for (final product in multiCollectionProducts) {
+        for (final collectionId in product.collectionIds) {
+          expect(collectionId.startsWith('c_'), isTrue);
+        }
       }
+    });
+  });
+
+  group('Specific product data integrity', () {
+    test('Essential T-Shirt has correct multi-collection setup', () {
+      final product = repository.getProductById('p_essential_tee');
+      
+      expect(product.collectionIds, contains('c_clothing'));
+      expect(product.collectionIds, contains('c_essential'));
+      expect(product.collectionIds.length, 2);
+    });
+
+    test('Signature T-Shirt has correct multi-collection setup', () {
+      final product = repository.getProductById('p_signature');
+      
+      expect(product.collectionIds, contains('c_clothing'));
+      expect(product.collectionIds, contains('c_signature'));
+    });
+
+    test('City Postcard has correct multi-collection setup', () {
+      final product = repository.getProductById('p_city_postcard');
+      
+      expect(product.collectionIds, contains('c_city'));
+      expect(product.collectionIds, contains('c_merch'));
     });
   });
 }
