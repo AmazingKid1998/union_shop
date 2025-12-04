@@ -1,25 +1,35 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/product.dart';
 import '../repositories/cart_repository.dart';
 
 class CartViewModel extends ChangeNotifier {
   final CartRepository _cartRepository = CartRepository();
+  StreamSubscription? _authSubscription;
 
-  // Constructor triggers the data load
   CartViewModel() {
     _loadData();
+    
+    // Listen for Login/Logout events
+    _authSubscription = FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      // When auth state changes (login or logout), reload the cart
+      _loadData();
+    });
   }
 
-  // Async function to load persisted data
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> _loadData() async {
     await _cartRepository.loadCart();
-    notifyListeners(); // Refresh UI once data is loaded from disk
+    notifyListeners();
   }
 
-  // Expose unique items for display purposes
   List<Product> get uniqueProducts => _cartRepository.getCartItems().toSet().toList();
-  
-  // Expose the raw list
   List<Product> get rawItems => _cartRepository.getCartItems();
 
   double get totalPrice {
@@ -30,7 +40,6 @@ class CartViewModel extends ChangeNotifier {
     return _cartRepository.getQuantity(product);
   }
 
-  // Actions
   void add(Product product) {
     _cartRepository.addItem(product);
     notifyListeners();
