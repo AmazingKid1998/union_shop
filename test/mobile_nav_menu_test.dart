@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:union_shop/viewmodels/cart_viewmodel.dart';
-import 'package:union_shop/widgets/mobile_nav_menu.dart'; // Adjust path
+import 'package:union_shop/viewmodels/shop_viewmodel.dart';
+import 'package:union_shop/widgets/mobile_nav_menu.dart';
 
 void main() {
   
-  // 1. HELPER: Create Test Widget with Provider and Navigator observers
-  // We need to 'spy' on the Navigator to ensure it pushes the right routes
-  Widget createNavTest(NavigatorObserver observer) {
+  // Helper: Create Test Widget with Provider and Navigator observers
+  Widget createNavTest({NavigatorObserver? observer}) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => CartViewModel()), // Required for the cart icon count
+        ChangeNotifierProvider(create: (_) => CartViewModel()),
+        ChangeNotifierProvider(create: (_) => ShopViewModel()),
       ],
       child: MaterialApp(
-        navigatorObservers: [observer], // Attach spy
+        navigatorObservers: observer != null ? [observer] : [],
         home: const MobileNavMenu(),
         routes: {
+          '/': (_) => const Text('Home Page'),
           '/login': (_) => const Text('Login Page'),
           '/cart': (_) => const Text('Cart Page'),
           '/sale': (_) => const Text('Sale Page'),
@@ -24,105 +26,278 @@ void main() {
           '/print-shack/about': (_) => const Text('PS About'),
           '/print-shack/tool': (_) => const Text('PS Tool'),
         },
+        onGenerateRoute: (settings) {
+          if (settings.name?.startsWith('/collection/') ?? false) {
+            return MaterialPageRoute(
+              builder: (_) => const Text('Collection Page'),
+            );
+          }
+          return null;
+        },
       ),
     );
   }
 
-  group('MobileNavMenu Logic', () {
-    late NavigatorObserver mockObserver;
-
-    setUp(() {
-      mockObserver = NavigatorObserver();
-    });
+  group('MobileNavMenu Main Menu Tests', () {
 
     // --- TEST 1: INITIAL RENDER ---
     testWidgets('Renders Main Menu items correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(createNavTest(mockObserver));
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
 
-      // Verify Header
-      // FIX: Use textContaining because 'UNION' is part of a larger RichText string "The UNION"
+      // Verify Header Logo
       expect(find.textContaining('UNION', findRichText: true), findsOneWidget);
       
+      // Verify Header Icons
       expect(find.byIcon(Icons.person_outline), findsOneWidget);
+      expect(find.byIcon(Icons.shopping_bag_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.close), findsOneWidget);
 
       // Verify Menu Options
       expect(find.text('Home'), findsOneWidget);
       expect(find.text('Shop'), findsOneWidget); 
       expect(find.text('The Print Shack'), findsOneWidget); 
       expect(find.text('SALE!'), findsOneWidget);
+      expect(find.text('About'), findsOneWidget);
+      expect(find.text('UPSU.net'), findsOneWidget);
     });
 
-    // --- TEST 2: INTERNAL NAVIGATION (Go to Shop Submenu) ---
+    // --- TEST 2: CLOSE BUTTON ---
+    testWidgets('Close button pops the menu', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.close));
+      await tester.pumpAndSettle();
+
+      // Menu should be closed (MobileNavMenu not in tree)
+      expect(find.byType(MobileNavMenu), findsNothing);
+    });
+
+    // --- TEST 3: ARROW INDICATORS ---
+    testWidgets('Shop and Print Shack have arrow indicators', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      // Should have chevron_right icons for submenus
+      expect(find.byIcon(Icons.chevron_right), findsNWidgets(2));
+    });
+  });
+
+  group('MobileNavMenu Shop Submenu Tests', () {
+
+    // --- TEST 4: OPEN SHOP SUBMENU ---
     testWidgets('Tapping Shop opens Shop Submenu', (WidgetTester tester) async {
-      await tester.pumpWidget(createNavTest(mockObserver));
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
 
-      // 1. Find and Tap 'Shop'
-      final shopItem = find.text('Shop');
-      await tester.tap(shopItem);
-      await tester.pump(); // Rebuild UI (setState)
-
-      // 2. Verify Header Changed
-      expect(find.text('Shop'), findsOneWidget); // Submenu Title
-      expect(find.byIcon(Icons.chevron_left), findsOneWidget); // Back Arrow
-
-      // 3. Verify Body Changed
-      expect(find.text('Clothing'), findsOneWidget);
-      expect(find.text('Merchandise'), findsOneWidget);
-      
-      // 4. Verify Main Menu items are GONE
-      expect(find.text('SALE!'), findsNothing); 
-    });
-
-    // --- TEST 3: BACK NAVIGATION (Submenu -> Main) ---
-    testWidgets('Back arrow returns to Main Menu', (WidgetTester tester) async {
-      await tester.pumpWidget(createNavTest(mockObserver));
-
-      // 1. Go to Shop
       await tester.tap(find.text('Shop'));
       await tester.pump();
 
-      // 2. Verify we are in Shop
+      // Verify Header Changed
+      expect(find.byIcon(Icons.chevron_left), findsOneWidget); // Back Arrow
+
+      // Verify Body Changed
+      expect(find.text('Clothing'), findsOneWidget);
+      expect(find.text('Merchandise'), findsOneWidget);
+      expect(find.text('Halloween 🎃'), findsOneWidget);
+      expect(find.text('Signature & Essential Range'), findsOneWidget);
+      expect(find.text('Portsmouth City Collection'), findsOneWidget);
+      expect(find.text('Pride Collection 🏳️‍🌈'), findsOneWidget);
+      expect(find.text('Graduation 🎓'), findsOneWidget);
+      
+      // Verify Main Menu items are GONE
+      expect(find.text('SALE!'), findsNothing); 
+    });
+
+    // --- TEST 5: BACK FROM SHOP ---
+    testWidgets('Back arrow returns to Main Menu from Shop', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      // Go to Shop
+      await tester.tap(find.text('Shop'));
+      await tester.pump();
+
+      // Verify we are in Shop
       expect(find.text('Clothing'), findsOneWidget);
 
-      // 3. Tap Back Arrow (In Header)
+      // Tap Back Arrow
       await tester.tap(find.byIcon(Icons.chevron_left));
       await tester.pump();
 
-      // 4. Verify we are back at Main
+      // Verify we are back at Main
       expect(find.text('SALE!'), findsOneWidget);
       expect(find.text('Clothing'), findsNothing);
     });
 
-    // --- TEST 4: EXTERNAL NAVIGATION (Link to Route) ---
-    testWidgets('Tapping Login Icon pushes /login route', (WidgetTester tester) async {
-      await tester.pumpWidget(createNavTest(mockObserver));
-
-      // 1. Tap Login Icon
-      await tester.tap(find.byIcon(Icons.person_outline));
+    // --- TEST 6: SHOP NAVIGATION ---
+    testWidgets('Tapping Clothing navigates to collection', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
       await tester.pumpAndSettle();
 
-      // 2. Verify New Page is visible
-      expect(find.text('Login Page'), findsOneWidget);
-    });
-    
-    // --- TEST 5: COMPLEX NAVIGATION (Deep Link) ---
-    testWidgets('Navigate Deep: Print Shack -> Personalisation', (WidgetTester tester) async {
-      await tester.pumpWidget(createNavTest(mockObserver));
+      await tester.tap(find.text('Shop'));
+      await tester.pump();
 
-      // 1. Open Print Shack Submenu
+      await tester.tap(find.text('Clothing'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Collection Page'), findsOneWidget);
+    });
+  });
+
+  group('MobileNavMenu Print Shack Submenu Tests', () {
+
+    // --- TEST 7: OPEN PRINT SHACK SUBMENU ---
+    testWidgets('Tapping Print Shack opens submenu', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
       await tester.tap(find.text('The Print Shack'));
       await tester.pump();
 
-      // 2. Find 'Personalisation' item
-      final link = find.text('Personalisation');
-      expect(link, findsOneWidget);
+      // Verify submenu items
+      expect(find.text('About'), findsOneWidget);
+      expect(find.text('Personalisation'), findsOneWidget);
+      expect(find.byIcon(Icons.chevron_left), findsOneWidget);
+    });
 
-      // 3. Tap it
-      await tester.tap(link);
+    // --- TEST 8: PRINT SHACK NAVIGATION ---
+    testWidgets('Navigate to Personalisation tool', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
       await tester.pumpAndSettle();
 
-      // 4. Verify Navigation to '/print-shack/tool'
+      await tester.tap(find.text('The Print Shack'));
+      await tester.pump();
+
+      await tester.tap(find.text('Personalisation'));
+      await tester.pumpAndSettle();
+
       expect(find.text('PS Tool'), findsOneWidget);
     });
+
+    // --- TEST 9: PRINT SHACK ABOUT ---
+    testWidgets('Navigate to Print Shack About', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('The Print Shack'));
+      await tester.pump();
+
+      await tester.tap(find.text('About'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('PS About'), findsOneWidget);
+    });
+  });
+
+  group('MobileNavMenu External Navigation Tests', () {
+
+    // --- TEST 10: LOGIN ---
+    testWidgets('Tapping Login Icon pushes /login route', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.person_outline));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Login Page'), findsOneWidget);
+    });
+
+    // --- TEST 11: CART ---
+    testWidgets('Tapping Cart Icon pushes /cart route', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.shopping_bag_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Cart Page'), findsOneWidget);
+    });
+
+    // --- TEST 12: SALE ---
+    testWidgets('Tapping SALE navigates correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('SALE!'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sale Page'), findsOneWidget);
+    });
+
+    // --- TEST 13: ABOUT ---
+    testWidgets('Tapping About navigates correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(createNavTest());
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('About'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('About Page'), findsOneWidget);
+    });
+  });
+
+  group('MobileNavMenu Cart Badge Tests', () {
+
+    testWidgets('Cart badge shows count when items in cart', (WidgetTester tester) async {
+      final cart = CartViewModel();
+      
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: cart),
+            ChangeNotifierProvider(create: (_) => ShopViewModel()),
+          ],
+          child: const MaterialApp(home: MobileNavMenu()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Add items
+      cart.add(
+        Product(
+          id: 'test',
+          title: 'Test',
+          price: 10,
+          image: 'img.jpg',
+          description: 'desc',
+          collectionIds: ['c_test'],
+        ),
+      );
+      cart.add(
+        Product(
+          id: 'test2',
+          title: 'Test2',
+          price: 15,
+          image: 'img.jpg',
+          description: 'desc',
+          collectionIds: ['c_test'],
+        ),
+      );
+      
+      await tester.pumpAndSettle();
+
+      expect(find.text('2'), findsOneWidget);
+    });
+  });
+}
+
+// Product class for testing (matches your model)
+class Product {
+  final String id;
+  final String title;
+  final double price;
+  final String image;
+  final String description;
+  final List<String> collectionIds;
+
+  Product({
+    required this.id,
+    required this.title,
+    required this.price,
+    required this.image,
+    required this.description,
+    required this.collectionIds,
   });
 }
