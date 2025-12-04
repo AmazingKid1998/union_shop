@@ -118,7 +118,7 @@ genhtml coverage/lcov.info -o coverage/html
 ---
 
 **Author:**  
-$$Jamilus Sheium$$
+Jamilus Sheium
 
 **University:**  
 University of Portsmouth
