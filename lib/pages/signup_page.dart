@@ -15,6 +15,7 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _authService = AuthService();
+  bool _isLoading = false; // New state for loading spinner
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,9 @@ class _SignupPageState extends State<SignupPage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF4B0082), padding: const EdgeInsets.symmetric(vertical: 15)),
-                      onPressed: () {
+                      // Disable button while loading
+                      onPressed: _isLoading ? null : () async {
+                        // 1. Validation
                         if (_nameController.text.isEmpty || _emailController.text.isEmpty || _passwordController.text.isEmpty) {
                            ScaffoldMessenger.of(context).showSnackBar(
                              const SnackBar(content: Text('Please fill all fields'))
@@ -69,10 +72,21 @@ class _SignupPageState extends State<SignupPage> {
                            return;
                         }
 
-                        // Call Signup function
-                        bool success = _authService.signup(_emailController.text, _passwordController.text, _nameController.text);
+                        // 2. Start Loading
+                        setState(() => _isLoading = true);
+
+                        // 3. Call Firebase Async Signup
+                        String? error = await _authService.signup(
+                          _emailController.text.trim(), 
+                          _passwordController.text.trim()
+                        );
                         
-                        if (success) {
+                        // 4. Stop Loading
+                        setState(() => _isLoading = false);
+                        
+                        // 5. Handle Result
+                        if (error == null) {
+                          // SUCCESS
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text('Account Created! Please Login.'),
@@ -82,18 +96,18 @@ class _SignupPageState extends State<SignupPage> {
                           );
                           Navigator.pop(context); // Go back to Login
                         } else {
-                          // Show clear error message
+                          // FAILURE
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               backgroundColor: Colors.redAccent,
                               content: Row(
-                                children: const [
-                                  Icon(Icons.error_outline, color: Colors.white),
-                                  SizedBox(width: 10),
-                                  Text('That email is already registered!'),
+                                children: [
+                                  const Icon(Icons.error_outline, color: Colors.white),
+                                  const SizedBox(width: 10),
+                                  Expanded(child: Text(error)), // Shows specific Firebase error (e.g. "Email in use")
                                 ],
                               ),
-                              duration: const Duration(seconds: 4), // 4 Seconds
+                              duration: const Duration(seconds: 4),
                               action: SnackBarAction(
                                 label: 'DISMISS',
                                 textColor: Colors.white,
@@ -105,7 +119,9 @@ class _SignupPageState extends State<SignupPage> {
                           );
                         }
                       },
-                      child: const Text('Sign Up', style: TextStyle(color: Colors.white, fontSize: 18)),
+                      child: _isLoading 
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white))
+                        : const Text('Sign Up', style: TextStyle(color: Colors.white, fontSize: 18)),
                     ),
                   ),
                 ],
