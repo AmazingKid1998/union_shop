@@ -115,7 +115,7 @@ dart run tool/coverage_summary.dart coverage/lcov.info
 
 ## 📸 Screenshots
 
-| Home Page (Desktop) | Product Page (Mobile) | Cart & Checkout |
+| Home Page (Mobile) | Product Page (Mobile) | Cart & Checkout |
 |:---:|:---:|:---:|
 | ![Home Page](screenshots/home_mobile.png) | ![Product Page](screenshots/product_mobile.png) | ![Cart](screenshots/cart_checkout.png) |
 
