@@ -1,51 +1,23 @@
-# Union Shop - Flutter Coursework
+Union Shop - Flutter E-Commerce AppA cross-platform (Web & Mobile) e-commerce application developed using Flutter, designed to replicate and enhance the functionality of a university student union shop. This project demonstrates modern Flutter development practices, including MVVM architecture, state management with Provider, responsive design, and Firebase backend integration.📱 Project OverviewThe Union Shop app allows students and staff to browse university merchandise, manage a shopping cart, and simulate a checkout process. It features a responsive layout that adapts seamlessly between mobile (hamburger menu) and desktop (navigation bar) views.Key FeaturesDynamic Product Catalog: Browse products by categories (Clothing, Merchandise, etc.) with deep linking support (e.g., /collection/c_clothing).Product Details: View rich product pages with image galleries, price details (including sale logic), and variant selection (size/color).Shopping Cart: Fully functional cart with persistent state (via Firebase/Local Storage), allowing users to add/remove items and adjust quantities.Search Functionality: Real-time product search with instant filtering.Authentication: User Sign Up, Login, and Profile management using Firebase Authentication.Data Persistence: User carts are stored in Cloud Firestore, ensuring cross-device synchronization for logged-in users.Responsive Design: Adaptive UI that shifts navigation patterns based on screen width (MobileNavMenu vs DesktopNavBar).Deep Linking: URL-based navigation for products and collections, enabling easy sharing and page refreshes on the web.🛠️ Tech Stack & ArchitectureThis project follows the MVVM (Model-View-ViewModel) architectural pattern to separate UI logic from business logic.Framework: Flutter (Dart)State Management: ProviderBackend: FirebaseAuthentication: Email/Password login.Cloud Firestore: Storing user cart data.Routing: Custom onGenerateRoute for dynamic path parsing and deep linking.Testing: flutter_test for Unit and Widget testing.Directory Structurelib/
+├── config/          # Configuration files (e.g., Firebase options)
+├── data/            # Dummy data sources (for development)
+├── models/          # Data models (Product, CartItem)
+├── pages/           # UI Screens (HomePage, ProductPage, CartPage)
+├── repositories/    # Data layer handling API/DB calls
+├── services/        # External services (AuthService)
+├── viewmodels/      # State management logic (ShopViewModel, CartViewModel)
+├── widgets/         # Reusable UI components (SiteHeader, ProductCard)
+└── main.dart        # Entry point and Routing logic
+🚀 Getting StartedPrerequisitesFlutter SDK installed.A Firebase project created with Authentication and Firestore enabled.InstallationClone the repository:git clone [https://github.com/your-username/union-shop.git](https://github.com/your-username/union-shop.git)
+cd union-shop
+Install dependencies:flutter pub get
+Firebase Configuration:Create a file lib/config/firebase_options.dart.Add your Firebase configuration keys (API Key, App ID, etc.) to this file. Note: This file is ignored by git for security.Run the App:# For Chrome (Web)
+flutter run -d chrome
 
-A cross-platform e-commerce application developed using Flutter, designed to recreate the functionality of the official [University of Portsmouth Student Union Shop](https://shop.upsu.net/).
-
-## 📱 Project Overview
-This project mimics the user experience of the UPSU shop, featuring a responsive design that works on both mobile and desktop web views. It allows users to browse collections, view product details, and manage a shopping cart.
-
-## ✨ Features Implemented
-* **Dynamic Homepage:** Displays featured "Essential Range" products dynamically from a data model.
-* **Product Navigation:** Full navigation flow from Home -> Shop -> Collection -> Product Details.
-* **Shopping Cart System:** * Add items to cart with immediate feedback.
-    * View cart contents with total price calculation.
-    * Remove items and clear cart functionality.
-    * Dynamic badge on the navigation bar showing real-time item count.
-* **Categorization:** Products are filtered by categories (Clothing, Accessories) in the Shop section.
-* **Authentication UI:** A clean, responsive login interface.
-* **Static Pages:** "About Us" and functional Footer.
-
-## 🛠️ Tech Stack
-* **Framework:** Flutter
-* **Language:** Dart
-* **State Management:** Global Singleton/Manager pattern for Cart state.
-
-## 🚀 How to Run
-1.  **Prerequisites:** Ensure you have the Flutter SDK installed.
-2.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/YOUR-USERNAME/union_shop.git](https://github.com/YOUR-USERNAME/union_shop.git)
-    ```
-3.  **Install dependencies:**
-    ```bash
-    flutter pub get
-    ```
-4.  **Run on Chrome (Recommended):**
-    ```bash
-    flutter run -d chrome
-    ```
-
-## 📂 Project Structure
-* `lib/main.dart`: Entry point of the application.
-* `lib/pages/`: Contains all screen UI (Home, Product, Cart, Login).
-* `lib/widgets/`: Reusable components (Header, Footer).
-* `lib/models/`: Data classes (Product, Collection) and Global Cart storage.
-* `lib/data/`: Dummy data population.
-
-## 🧪 Testing
-The project includes widget tests ensuring the reliability of core components.
-Run tests using:
-```bash
-flutter test
-```
+# For Mobile (Emulator)
+flutter run
+🧪 TestingThe project includes a comprehensive test suite covering critical user flows and logic.Unit Tests: Verify ViewModel logic (e.g., Cart calculations, Search filtering).Widget Tests: Verify UI rendering and interaction (e.g., Navigation clicks, Form inputs).To run all tests:flutter test
+To generate a coverage report:flutter test --coverage
+# (Optional) Generate HTML report if you have lcov installed
+genhtml coverage/lcov.info -o coverage/html
+📸 ScreenshotsHome Page (Desktop)Product Page (Mobile)Cart & Checkout(Place screenshot here)(Place screenshot here)(Place screenshot here)🔮 Future ImprovementsPayment Integration: Connect Stripe or PayPal for real payment processing.Admin Panel: A dedicated interface for adding/removing products without code changes.User Reviews: Allow students to leave ratings on products.Author: [Your Name]Course: [Your Course Name]University: University of Portsmouth
