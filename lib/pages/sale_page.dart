@@ -6,7 +6,10 @@ import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 
 class SalePage extends StatelessWidget {
-  const SalePage({super.key});
+  // NEW: Add this optional parameter
+  final PreferredSizeWidget? testHeader;
+  
+  const SalePage({super.key, this.testHeader});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,8 @@ class SalePage extends StatelessWidget {
     final saleProducts = shopVM.getSaleItems();
 
     return Scaffold(
-      appBar: const SiteHeader(),
+      // UPDATED: Use testHeader logic
+      appBar: testHeader ?? const SiteHeader(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -27,7 +31,7 @@ class SalePage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 36, 
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF333333), // Dark grey
+                      color: Color(0xFF333333), 
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -90,7 +94,6 @@ class SalePage extends StatelessWidget {
   Widget _buildSaleCard(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Deep Link URL ID
         Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Column(

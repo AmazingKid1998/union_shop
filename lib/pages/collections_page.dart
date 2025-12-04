@@ -4,12 +4,16 @@ import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
 
 class CollectionsPage extends StatelessWidget {
-  const CollectionsPage({super.key});
+  // NEW: Add this optional parameter
+  final PreferredSizeWidget? testHeader;
+
+  const CollectionsPage({super.key, this.testHeader});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const SiteHeader(),
+      // UPDATED: Use testHeader if provided, otherwise use the real SiteHeader
+      appBar: testHeader ?? const SiteHeader(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -49,7 +53,6 @@ class CollectionsPage extends StatelessWidget {
   Widget _buildCategoryCard(BuildContext context, String title, String id, String imagePath) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Deep Link URL path
         Navigator.pushNamed(context, '/collection/$id');
       },
       child: Container(

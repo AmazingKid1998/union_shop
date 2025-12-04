@@ -4,11 +4,8 @@ import '../viewmodels/shop_viewmodel.dart';
 import '../models/product.dart';
 import '../widgets/site_header.dart';
 import '../widgets/site_footer.dart';
-
-// Import enum if needed for filtering logic later
 import '../viewmodels/shop_viewmodel.dart' show SortOption;
 
-// Define price ranges
 const Map<String, double> priceRanges = {
   'All Prices': 1000.0, 
   'Under £10': 9.99,
@@ -19,11 +16,15 @@ const Map<String, double> priceRanges = {
 class CollectionDetailPage extends StatefulWidget {
   final String collectionId;
   final String title;
+  
+  // NEW: Optional test Header
+  final PreferredSizeWidget? testHeader;
 
   const CollectionDetailPage({
     super.key, 
     required this.collectionId, 
-    required this.title
+    required this.title,
+    this.testHeader,
   });
 
   @override
@@ -31,19 +32,15 @@ class CollectionDetailPage extends StatefulWidget {
 }
 
 class _CollectionDetailPageState extends State<CollectionDetailPage> {
-  // State for Sort and Filter
   SortOption? _selectedSort;
   String _selectedPriceRange = priceRanges.keys.first; 
 
   @override
   Widget build(BuildContext context) {
-    // 1. Determine filter values
     double maxPriceFilter = priceRanges[_selectedPriceRange]!;
     
-    // 2. Access ViewModel
     final shopVM = Provider.of<ShopViewModel>(context);
     
-    // 3. Fetch Data with Filters
     final products = shopVM.getByCollection(
       widget.collectionId, 
       sortOption: _selectedSort,
@@ -52,11 +49,11 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
     );
 
     return Scaffold(
-      appBar: const SiteHeader(),
+      // UPDATED: Use testHeader
+      appBar: widget.testHeader ?? const SiteHeader(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- HEADER SECTION ---
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
               child: Column(
@@ -65,11 +62,9 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                   Text(widget.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
                   
-                  // CONTROLS ROW (Sort & Filter)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Sort Dropdown
                       DropdownButton<SortOption>(
                         hint: const Text('Sort By'),
                         value: _selectedSort,
@@ -87,7 +82,6 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
                       
                       const Spacer(),
                       
-                      // Filter Dropdown
                       DropdownButton<String>(
                         value: _selectedPriceRange,
                         onChanged: (String? newValue) {
@@ -108,7 +102,6 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
               ),
             ),
             
-            // --- PRODUCT GRID ---
             if (products.isEmpty)
               const Padding(
                 padding: EdgeInsets.all(40.0),
@@ -144,7 +137,6 @@ class _CollectionDetailPageState extends State<CollectionDetailPage> {
   Widget _buildProductItem(BuildContext context, Product product) {
     return GestureDetector(
       onTap: () {
-        // NAV CHANGE: Use Deep Link URL ID
         Navigator.pushNamed(context, '/product/${product.id}');
       },
       child: Column(
