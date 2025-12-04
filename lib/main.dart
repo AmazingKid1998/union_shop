@@ -30,15 +30,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
   
   // Initialize Firebase
-  // TODO: Replace placeholders with your actual config
+  // TODO: Replace placeholders with your actual config from Firebase Console -> Project Settings
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "YOUR_API_KEY", 
-      appId: "YOUR_APP_ID",
-      messagingSenderId: "YOUR_SENDER_ID",
-      projectId: "YOUR_PROJECT_ID",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      storageBucket: "YOUR_STORAGE_BUCKET",
+      apiKey: "AIzaSyAIOOgIQdXQ8w2J278PJum40SGrFvhHM6c",
+      authDomain: "union-shop-3d338.firebaseapp.com",
+      projectId: "union-shop-3d338",
+      storageBucket: "union-shop-3d338.firebasestorage.app",
+      messagingSenderId: "1060566522536",
+      appId: "1:1060566522536:web:f06f03ae29e8f751ce009d"
     ),
   );
 
