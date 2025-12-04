@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
+import 'package:firebase_core/firebase_core.dart'; 
+
+// CONFIG IMPORT (This keeps your keys separate)
+import 'config/firebase_options.dart'; 
 
 // ViewModels
 import 'viewmodels/shop_viewmodel.dart';
@@ -24,22 +27,14 @@ import 'pages/cart_page.dart';
 import 'pages/login_page.dart';
 import 'pages/sale_page.dart';
 import 'pages/signup_page.dart'; 
-import 'pages/profile_page.dart'; // <--- ADDED IMPORT
+import 'pages/profile_page.dart'; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); 
   
-  // Initialize Firebase
-  // TODO: Replace placeholders with your actual config from Firebase Console -> Project Settings
+  // Initialize Firebase using the separate config file
   await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAIOOgIQdXQ8w2J278PJum40SGrFvhHM6c",
-      authDomain: "union-shop-3d338.firebaseapp.com",
-      projectId: "union-shop-3d338",
-      storageBucket: "union-shop-3d338.firebasestorage.app",
-      messagingSenderId: "1060566522536",
-      appId: "1:1060566522536:web:f06f03ae29e8f751ce009d"
-    ),
+    options: DefaultFirebaseOptions.currentPlatform, // Cleaner and safer
   );
 
   runApp(
@@ -116,7 +111,7 @@ class UnionShopApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const LoginPage(), settings: settings);
           case '/signup':
             return MaterialPageRoute(builder: (_) => const SignupPage(), settings: settings);
-          case '/profile': // <--- ADDED ROUTE
+          case '/profile': 
             return MaterialPageRoute(builder: (_) => const ProfilePage(), settings: settings);
           case '/sale':
             return MaterialPageRoute(builder: (_) => const SalePage(), settings: settings);
