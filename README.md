@@ -56,7 +56,7 @@ lib/
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/union-shop.git
+git clone https://github.com/AmazingKid1998/union_shop.git
 cd union-shop
 ```
 
@@ -118,10 +118,7 @@ genhtml coverage/lcov.info -o coverage/html
 ---
 
 **Author:**  
-$$Your Name$$
-
-**Course:**  
-$$Your Course Name$$
+$$Jamilus Sheium$$
 
 **University:**  
 University of Portsmouth
