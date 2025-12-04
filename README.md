@@ -56,7 +56,7 @@ lib/
 Clone the repository:
 
 ```bash
-git clone https://github.com/AmazingKid1998/union_shop.git
+git clone [https://github.com/AmazingKid1998/union_shop.git](https://github.com/AmazingKid1998/union_shop.git)
 cd union-shop
 ```
 
@@ -84,10 +84,20 @@ flutter run
 
 ## 🧪 Testing
 
-The project includes a comprehensive test suite covering critical user flows and logic.
+The project implements a "Safe Testing" strategy that isolates the UI and Logic from external dependencies (Firebase), ensuring tests pass reliably in CI/CD environments.
 
-- **Unit Tests**: Verify ViewModel logic (e.g., cart calculations, search filtering).
-- **Widget Tests**: Verify UI rendering and interaction (e.g., navigation clicks, form inputs).
+- **Logic & Unit Tests**: 
+  - Validates `Product` model JSON serialization.
+  - Tests `ProductRepository` and `ShopViewModel` logic, covering sorting algorithms (Price Low/High, Name A-Z), filtering (Price Ranges), and search capabilities.
+  - **Edge Case Handling**: Verified repository fallbacks for invalid IDs and empty collections.
+  
+- **Widget Tests**: 
+  - Verifies the rendering of independent components like `HomeCarousel` and `SiteFooter`.
+  - Handles layout constraints (e.g., overflows) using custom viewports and scroll wrappers.
+
+- **Safe Page Integration Tests**: 
+  - Tests full screen flows (`CollectionsPage`, `ProductPage`, `SalePage`) without requiring a live Firebase connection.
+  - **Dependency Injection**: Utilizes a `MockCartViewModel` (in-memory storage) and injected `testHeaders` to bypass Firebase Auth/Firestore during testing, allowing verification of navigation, product rendering, and "Add to Cart" flows offline.
 
 To run all tests:
 
@@ -100,7 +110,7 @@ To generate a coverage report:
 ```bash
 flutter test --coverage
 # (Optional) Generate HTML report if you have lcov installed
-genhtml coverage/lcov.info -o coverage/html
+dart run tool/coverage_summary.dart coverage/lcov.info
 ```
 
 ## 📸 Screenshots
@@ -117,8 +127,6 @@ genhtml coverage/lcov.info -o coverage/html
 
 ---
 
-**Author:**  
-Jamilus Sheium
+**Author:** Jamilus Sheium
 
-**University:**  
-University of Portsmouth
+**University:** University of Portsmouth
