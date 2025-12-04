@@ -16,6 +16,7 @@ dependencies:
   shared_preferences: ^2.2.0
   firebase_core: ^3.6.0  # Core Firebase package
   firebase_auth: ^5.3.1  # Authentication package
+  cloud_firestore: ^5.4.4
 
 dev_dependencies:
   flutter_test:
