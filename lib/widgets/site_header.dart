@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; 
+import 'package:firebase_auth/firebase_auth.dart'; // <--- ADDED IMPORT
 import '../viewmodels/cart_viewmodel.dart'; 
 import 'mobile_nav_menu.dart'; 
 import 'desktop_nav_bar.dart'; 
-import 'product_search_delegate.dart'; // <--- ADD THIS IMPORT
+import 'product_search_delegate.dart';
 
 class SiteHeader extends StatelessWidget implements PreferredSizeWidget {
   static const double desktopBreakpoint = 800;
@@ -85,7 +86,7 @@ class MobileNavRow extends StatelessWidget {
           
           const Spacer(),
 
-          // SEARCH ICON (FIXED)
+          // SEARCH ICON
           IconButton(
             icon: const Icon(Icons.search, size: 26, color: Colors.black87),
             onPressed: () { 
@@ -96,10 +97,27 @@ class MobileNavRow extends StatelessWidget {
             }, 
           ),
 
-          // PROFILE ICON
-          IconButton(
-            icon: const Icon(Icons.person_outline, size: 26, color: Colors.black87),
-            onPressed: () { Navigator.pushNamed(context, '/login'); },
+          // PROFILE ICON (SMART NAVIGATION)
+          StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(), // Listen to login state
+            builder: (context, snapshot) {
+              final bool isLoggedIn = snapshot.hasData;
+              return IconButton(
+                icon: Icon(
+                  Icons.person_outline, 
+                  size: 26, 
+                  color: isLoggedIn ? Colors.indigo : Colors.black87 // Purple if logged in
+                ),
+                tooltip: isLoggedIn ? 'My Profile' : 'Sign In',
+                onPressed: () {
+                  if (isLoggedIn) {
+                    Navigator.pushNamed(context, '/profile');
+                  } else {
+                    Navigator.pushNamed(context, '/login');
+                  }
+                },
+              );
+            }
           ),
 
           // CART ICON WITH BADGE
