@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 
 // ViewModels
 import 'viewmodels/shop_viewmodel.dart';
@@ -24,7 +25,23 @@ import 'pages/login_page.dart';
 import 'pages/sale_page.dart';
 import 'pages/signup_page.dart'; 
 
-void main() {
+// Make main async to initialize Firebase
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Required when using plugins before runApp
+  
+  // Initialize Firebase with your project configuration
+  // TODO: Replace these values with your actual Firebase config
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAIOOgIQdXQ8w2J278PJum40SGrFvhHM6c",
+      authDomain: "union-shop-3d338.firebaseapp.com",
+      projectId: "union-shop-3d338",
+      storageBucket: "union-shop-3d338.firebasestorage.app",
+      messagingSenderId: "1060566522536",
+      appId: "1:1060566522536:web:f06f03ae29e8f751ce009d"
+    ),
+  );
+
   runApp(
     MultiProvider(
       providers: [
@@ -55,7 +72,7 @@ class UnionShopApp extends StatelessWidget {
         if (settings.name == '/') {
           return MaterialPageRoute(
             builder: (_) => const HomePage(),
-            settings: settings, // FIX: Pass settings here
+            settings: settings, 
           );
         }
 
@@ -72,7 +89,7 @@ class UnionShopApp extends StatelessWidget {
               collectionId: id,
               title: title,
             ),
-            settings: settings, // This was already correct
+            settings: settings, 
           );
         }
 
@@ -83,12 +100,11 @@ class UnionShopApp extends StatelessWidget {
           
           return MaterialPageRoute(
             builder: (_) => ProductPage(product: product),
-            settings: settings, // This was already correct
+            settings: settings, 
           );
         }
 
-        // --- STATIC ROUTES (FIXED) ---
-        // Added 'settings: settings' to ALL routes below to fix URL updates
+        // --- STATIC ROUTES ---
         switch (settings.name) {
           case '/about':
             return MaterialPageRoute(builder: (_) => const AboutPage(), settings: settings);
@@ -98,6 +114,8 @@ class UnionShopApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const CartPage(), settings: settings);
           case '/login':
             return MaterialPageRoute(builder: (_) => const LoginPage(), settings: settings);
+          case '/signup': // Make sure signup route is registered if you navigate to it
+            return MaterialPageRoute(builder: (_) => const SignupPage(), settings: settings);
           case '/sale':
             return MaterialPageRoute(builder: (_) => const SalePage(), settings: settings);
           case '/print-shack':
