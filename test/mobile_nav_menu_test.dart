@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:union_shop/viewmodels/cart_viewmodel.dart';
 import 'package:union_shop/viewmodels/shop_viewmodel.dart';
 import 'package:union_shop/widgets/mobile_nav_menu.dart';
+import 'package:union_shop/models/product.dart'; // Import the actual Product model
 
 void main() {
   
@@ -254,7 +255,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Add items
+      // Add items using the actual Product model from union_shop/models/product.dart
       cart.add(
         Product(
           id: 'test',
@@ -280,24 +281,5 @@ void main() {
 
       expect(find.text('2'), findsOneWidget);
     });
-  });
-}
-
-// Product class for testing (matches your model)
-class Product {
-  final String id;
-  final String title;
-  final double price;
-  final String image;
-  final String description;
-  final List<String> collectionIds;
-
-  Product({
-    required this.id,
-    required this.title,
-    required this.price,
-    required this.image,
-    required this.description,
-    required this.collectionIds,
   });
 }
