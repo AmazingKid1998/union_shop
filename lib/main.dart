@@ -24,21 +24,21 @@ import 'pages/cart_page.dart';
 import 'pages/login_page.dart';
 import 'pages/sale_page.dart';
 import 'pages/signup_page.dart'; 
+import 'pages/profile_page.dart'; // <--- ADDED IMPORT
 
-// Make main async to initialize Firebase
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // Required when using plugins before runApp
+  WidgetsFlutterBinding.ensureInitialized(); 
   
-  // Initialize Firebase with your project configuration
-  // TODO: Replace these values with your actual Firebase config
+  // Initialize Firebase
+  // TODO: Replace placeholders with your actual config
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyAIOOgIQdXQ8w2J278PJum40SGrFvhHM6c",
-      authDomain: "union-shop-3d338.firebaseapp.com",
-      projectId: "union-shop-3d338",
-      storageBucket: "union-shop-3d338.firebasestorage.app",
-      messagingSenderId: "1060566522536",
-      appId: "1:1060566522536:web:f06f03ae29e8f751ce009d"
+      apiKey: "YOUR_API_KEY", 
+      appId: "YOUR_APP_ID",
+      messagingSenderId: "YOUR_SENDER_ID",
+      projectId: "YOUR_PROJECT_ID",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      storageBucket: "YOUR_STORAGE_BUCKET",
     ),
   );
 
@@ -114,8 +114,10 @@ class UnionShopApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const CartPage(), settings: settings);
           case '/login':
             return MaterialPageRoute(builder: (_) => const LoginPage(), settings: settings);
-          case '/signup': // Make sure signup route is registered if you navigate to it
+          case '/signup':
             return MaterialPageRoute(builder: (_) => const SignupPage(), settings: settings);
+          case '/profile': // <--- ADDED ROUTE
+            return MaterialPageRoute(builder: (_) => const ProfilePage(), settings: settings);
           case '/sale':
             return MaterialPageRoute(builder: (_) => const SalePage(), settings: settings);
           case '/print-shack':
