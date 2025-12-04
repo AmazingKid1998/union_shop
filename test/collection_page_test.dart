@@ -7,6 +7,20 @@ import 'package:union_shop/viewmodels/cart_viewmodel.dart';
 import 'package:union_shop/viewmodels/shop_viewmodel.dart';
 import 'package:union_shop/widgets/site_footer.dart';
 
+// Helper function defined at top level
+String _getCollectionTitle(String id) {
+  switch (id) {
+    case 'c_clothing': return 'Clothing';
+    case 'c_merch': return 'Merchandise';
+    case 'c_halloween': return 'Halloween 🎃';
+    case 'c_grad': return 'Graduation 🎓';
+    case 'c_city': return 'Portsmouth City';
+    case 'c_pride': return 'Pride 🏳️‍🌈';
+    case 'c_signature': return 'Signature Range';
+    default: return 'Collection';
+  }
+}
+
 void main() {
   
   // Helper: Test Harness with ALL required Providers
@@ -30,7 +44,7 @@ void main() {
             return MaterialPageRoute(
               builder: (_) => CollectionDetailPage(
                 collectionId: id,
-                title: _getTitle(id),
+                title: _getCollectionTitle(id),
               ),
             );
           }
@@ -41,19 +55,6 @@ void main() {
         },
       ),
     );
-  }
-
-  static String _getTitle(String id) {
-    switch (id) {
-      case 'c_clothing': return 'Clothing';
-      case 'c_merch': return 'Merchandise';
-      case 'c_halloween': return 'Halloween 🎃';
-      case 'c_grad': return 'Graduation 🎓';
-      case 'c_city': return 'Portsmouth City';
-      case 'c_pride': return 'Pride 🏳️‍🌈';
-      case 'c_signature': return 'Signature Range';
-      default: return 'Collection';
-    }
   }
 
   group('CollectionsPage Tests', () {
@@ -165,17 +166,4 @@ void main() {
       expect(gestureDetectors, findsNWidgets(7));
     });
   });
-}
-
-String _getTitle(String id) {
-  switch (id) {
-    case 'c_clothing': return 'Clothing';
-    case 'c_merch': return 'Merchandise';
-    case 'c_halloween': return 'Halloween 🎃';
-    case 'c_grad': return 'Graduation 🎓';
-    case 'c_city': return 'Portsmouth City';
-    case 'c_pride': return 'Pride 🏳️‍🌈';
-    case 'c_signature': return 'Signature Range';
-    default: return 'Collection';
-  }
 }
